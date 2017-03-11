@@ -64,7 +64,7 @@ $_GET['tag']=0;
                 + '<div class="weui_cell moments__post">'
 
                 + '<div class="weui_cell_hd">'
-                + '<img src="' + data[i].question_user[0].headimgurl + '"/>'
+                + '<img src="' + data[i].answer_user[0].headimgurl + '"/>'
                 + '</div>'
 
                 + '<div class="weui_cell_bd"  style="width: 100%;">'
@@ -72,7 +72,7 @@ $_GET['tag']=0;
 
                 + '<!-- 人名链接 -->'
                 + '<a class="title" href="javascript:;">'
-                + '<span>' + data[i].question_user[0].username + '</span>'
+                + '<span>' + data[i].answer_user[0].username + '</span>'
                 + '</a>'
 
 
