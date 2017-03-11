@@ -80,9 +80,8 @@ $_GET['tag']=0;
                 + '<p id="paragraph" class="paragraph">'
                 + "问题 : "+data[i].question_content
                 + '</p>'
-                + '专家回答 : <a href="pt_send_question.php?id='+data[i].answer_user[0].id+'">'+ data[i].answer_user[0].username +"</a>"
                 + '<!-- 伸张链接 -->'
-                + '<a id="paragraphExtender" class="paragraphExtender" style="color: white;"><span class="icon icon-44" style="padding-right:4px"></span> 免费偷听</a>'
+                + '<a id="paragraphExtender" class="paragraphExtender" style="color: white;"><span class="icon icon-44" style="padding-right:4px"></span> 免费旁听</a>'
                 + '<!-- 相册 -->'
                 + '<div class="thumbnails">'
 
