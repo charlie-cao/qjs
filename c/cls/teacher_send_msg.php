@@ -64,6 +64,7 @@ $signPackage = $jssdk->GetSignPackage();
                         d[d.length] = {name : "name",value: '<?=$_SESSION['user']->username?>'};
                         d[d.length] = {name : "headimg",value: '<?=$_SESSION['user']->headimgurl?>'};
                         d[d.length] = {name : "user_id",value: '<?=$_SESSION['user']->id ?>'};
+                        d[d.length] = {name : "school_id",value: '<?=$_SESSION['school_id'] ?>'};
 
                         d[d.length] = {name : "cls_id",value: '<?=$_SESSION['cls_id'] ?>'};
 
@@ -116,8 +117,9 @@ $signPackage = $jssdk->GetSignPackage();
                         isShowProgressTips: 1,
                         success: function (res) {
                             var serverId = res.serverId; // 返回图片的服务器端ID
-                            $.post("../api/save_pic.php?m=we_demo", {serverId: serverId}, function (data) {
-                                $('#preview').append('<li class="weui_uploader_file p_img" style="background-image:url(' + localId + ')"></li>');
+                            $.post("../api/cls.php?a=save_pic", {serverId: serverId}, function (data) {
+
+                                $('#preview').append('<li class="weui_uploader_file p_img" style="background-image:url(' + data.src + ')"></li>');
                                 $('#files').append('<input value="' + data.src + '" data-id="'+localId+'"  type="hidden"  name="files[]" />');
 
                                 //重置图片索引

@@ -231,18 +231,24 @@ if(isset($_GET['cls_id'])){
         function reset_up(id,users,ret = false){
             if(typeof(users) != undefined){
                 var up_user_html = ""
-                if(users.length>0){
-                    up_user_html = '<p class="liketext" style="margin-top: 6px; padding-top:2px; padding-bottom:2px;border-bottom: 1px solid #e4e4e4;" >'
-                    up_user_html += '<i class="icon icon-96" style="padding-right: 6px;padding-left: 6px;color: #5d6b85; font-size:14px"></i>'
-                    for(i in users){
-                        if(i==users.length-1){
-                            up_user_html +='<span class="nickname" style="font-size: 14px;">'+users[i].nickname+'</span> ';
-                        }else{
-                            up_user_html +='<span class="nickname" style="font-size: 14px;">'+users[i].nickname+'</span> ,';
+                console.log(users);
+                if(users===null){
 
+                }else{
+                    if(users.length>0){
+                        up_user_html = '<p class="liketext" style="margin-top: 6px; padding-top:2px; padding-bottom:2px;border-bottom: 1px solid #e4e4e4;" >'
+                        up_user_html += '<i class="icon icon-96" style="padding-right: 6px;padding-left: 6px;color: #5d6b85; font-size:14px"></i>'
+                        for(i in users){
+                            if(i==users.length-1){
+                                up_user_html +='<span class="nickname" style="font-size: 14px;">'+users[i].nickname+'</span> ';
+                            }else{
+                                up_user_html +='<span class="nickname" style="font-size: 14px;">'+users[i].nickname+'</span> ,';
+
+                            }
                         }
+                        up_user_html += '</p>';
                     }
-                    up_user_html += '</p>';
+
                 }
 
                 if(ret){
@@ -288,9 +294,9 @@ if(isset($_GET['cls_id'])){
 
             var del_link = "";
             if(data[i].user[0].id == <?=$_SESSION['user']->id?>){
-                del_link = '<a class="title" href="javascript:;" onclick="del(' + data[i].id + ',this);" style="float: right;">';
-                del_link = '<span class="icon icon-26"></span>';
-                del_link = '</a>';
+                del_link += '<a class="title" href="javascript:;" onclick="del(' + data[i].id + ',this);" style="float: right;">';
+                del_link += '<span class="icon icon-26"></span>';
+                del_link += '</a>';
             }
 
             var result = ''
@@ -551,8 +557,8 @@ if(isset($_GET['cls_id'])){
 </div>
 
 <div class="page-hd" style="padding: 0px">
-    <div class="weui_tab" id="tab5" style="height:44px;">
-        <div class="weui_navbar">
+    <div class="weui_tab" style="height:44px;">
+        <div class="weui_navbar" style="">
              <a href="pt_main.php?tag=0" style="padding: 10px 0;" class="weui_navbar_item <?= ($_GET['tag']==0)?"tab-green":"" ?>"> 动态 </a>
              <a href="pt_main.php?tag=1" style="padding: 10px 0;"  class="weui_navbar_item <?= ($_GET['tag']==1)?"tab-green":"" ?>"> 通知 </a>
              <a href="pt_main.php?tag=2" style="padding: 10px 0;"  class="weui_navbar_item <?= ($_GET['tag']==2)?"tab-green":"" ?>"> 成长秀 </a>

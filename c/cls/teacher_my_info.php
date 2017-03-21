@@ -59,7 +59,7 @@ check_login();
 
 
             <div class="weui-header bg-green">
-                <div class="weui-header-left"> <a href="pt_menu.php" class="icon icon-109 f-white">返回</a> </div>
+                <div class="weui-header-left"> <a href="teacher_menu.php" class="icon icon-109 f-white">返回</a> </div>
                 <h1 class="weui-header-title">个人信息</h1>
                 <div class="weui-header-right"> </div>
             </div>

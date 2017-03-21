@@ -2401,12 +2401,12 @@ body {
 }
 .moments__post .weui_cell_bd .actionMenu {
   position: absolute;
-  height: 40px;
+  height: 30px;
   background-color: #4e5156;
   border-radius: 5px;
   z-index: 5;
   top: -10px;
-  right: 20px;
+  right: 25px;
   display: none;
   -webkit-justify-content: space-around;
    

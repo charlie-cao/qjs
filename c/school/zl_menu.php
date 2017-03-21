@@ -26,28 +26,36 @@ if(isset($rs)){
     <script src="../public/zepto.min.js"></script>
     <script>
         $(function () {
-
             var $form = $("#form");
             $form.form();
             $("#btn").click(function (e) {
-                $form.validate(function(error){
-                    if(error){
-                    }else{
+                $form.validate(function (error) {
+                    if (error) {
+                    } else {
                         $.showLoading("更新中");
-                                        $.ajax({
-                                            type: 'GET',
-                                            url: 'http://schoolcms.isqgame.com/api.php?m=Api&c=Index&a=updateUserInfo',
-                                            dataType: 'jsonp',
-                                            data:$form.serialize(),
-                                            success: function (data) {
-                                                $.hideLoading();
-                                                $.toast("更新成功");
-                                            },
-                                            error: function (xhr, type) {
-                                                $.hideLoading();
-                                                console.log('Ajax error!');
-                                            }
-                                            });
+                        $.ajax({
+                            type: 'POST',
+                            url: '../api/school.php?a=update_user_info',
+                            dataType: 'json',
+                            data: $form.serialize(),
+                            success: function (data) {
+                                $.hideLoading();
+                                if(data.msg=="success"){
+                                    $.alert("更新成功,稍后将重新登录", "系统消息",function (){
+                                        location.href = "index.php?state=<?=$_SESSION['state']?>";
+                                    });
+                                }else{
+                                    alert(data.msg);
+                                }
+
+
+
+                            },
+                            error: function (xhr, type) {
+                                $.hideLoading();
+                                console.log('Ajax error!');
+                            }
+                        });
                     }
                 });
             })
@@ -79,23 +87,30 @@ if(isset($rs)){
                 <h1 class="weui-header-title">个人信息</h1>
                 <div class="weui-header-right"> </div>
             </div>
-<form id="form">
-            <div class="weui_cells weui_cells_form">
-                <div class="weui_cell">
-                    <div class="weui_cell_hd"><label class="weui_label">个人备注</label></div>
-                    <div class="weui_cell_bd weui_cell_primary">
-                        <input class="weui_input" name="username" required="" tips="请输入备注名称" placeholder="比如：梁爽老师" value="<?=$_SESSION['user']->username?>" />
-                        <input class="weui_input" name="openid"  type="hidden" value="<?=$_SESSION['user']->openid?>" />
-                    </div>
-                </div>
-                <div class="weui_cell">
-                    <div class="weui_cell_hd"><label class="weui_label">电话</label></div>
-                    <div class="weui_cell_bd weui_cell_primary">
-                    <input class="weui_input" name="phone" value="<?=$_SESSION['user']->phone?>"  type="tel" required="" pattern="[0-9]{11}" maxlength="11" placeholder="输入你现在的手机号" emptytips="请输入手机号" notmatchtips="请输入正确的手机号">
-                    </div>
+
+
+
+    <form id="form">
+        <div class="weui_cells weui_cells_form">
+            <div class="weui_cell">
+                <div class="weui_cell_hd"><label class="weui_label">备注名称</label></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <input class="weui_input" name="username" required="" tips="请输入备注名称" placeholder="比如：梁爽老师"
+                           value="<?= $_SESSION['user']->username ?>"/>
+                    <input class="weui_input" name="id" type="hidden" value="<?= $_SESSION['user']->id ?>"/>
                 </div>
             </div>
-</form>
+            <div class="weui_cell">
+                <div class="weui_cell_hd"><label class="weui_label">电话</label></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <input class="weui_input" name="phone" value="<?= $_SESSION['user']->phone ?>" type="tel"
+                           required="" pattern="[0-9]{11}" maxlength="11" placeholder="输入你现在的手机号" emptytips="请输入手机号"
+                           notmatchtips="请输入正确的手机号">
+                </div>
+            </div>
+        </div>
+    </form>
+
             <div class="weui_btn_area">
                 <a class="weui_btn weui_btn_primary" href="javascript:" id="btn">更新</a>
             </div>

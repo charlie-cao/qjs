@@ -16,36 +16,41 @@ check_login();
     <script src="../public/zepto.min.js"></script>
     <script src="../public/iscroll.js"></script>
     <script>
-        $(function () {
-            var $form = $("#form");
-            $form.form();
-            $("#btn").click(function (e) {
-                $form.validate(function (error) {
-                    if (error) {
-                    } else {
-                        $.showLoading("更新中");
-                        $.ajax({
-                            type: 'GET',
-                            url: 'http://schoolcms.isqgame.com/api.php?m=Api&c=Index&a=updateUserInfo',
-                            dataType: 'jsonp',
-                            data: $form.serialize(),
-                            success: function (data) {
-                                $.hideLoading();
+         $(function () {
+             var $form = $("#form");
+             $form.form();
+             $("#btn").click(function (e) {
+                 $form.validate(function (error) {
+                     if (error) {
+                     } else {
+                         $.showLoading("更新中");
+                         $.ajax({
+                             type: 'POST',
+                             url: '../api/school.php?a=update_user_info',
+                             dataType: 'json',
+                             data: $form.serialize(),
+                             success: function (data) {
+                                 $.hideLoading();
+                                 if(data.msg=="success"){
+                                     $.alert("更新成功,稍后将重新登录", "系统消息",function (){
+                                         location.href = "index.php?state=<?=$_SESSION['state']?>";
+                                     });
+                                 }else{
+                                     alert(data.msg);
+                                 }
 
-                                $.alert("更新成功,请重新登录", "系统消息",function (){
-                                    location.href = "index.php?state=<?=$_SESSION['state']?>";
-                                });
 
-                            },
-                            error: function (xhr, type) {
-                                $.hideLoading();
-                                console.log('Ajax error!');
-                            }
-                        });
-                    }
-                });
-            })
-        });
+
+                             },
+                             error: function (xhr, type) {
+                                 $.hideLoading();
+                                 console.log('Ajax error!');
+                             }
+                         });
+                     }
+                 });
+             })
+         });
     </script>
     <style>
         .weui_cell_hd .icon {
@@ -67,6 +72,7 @@ check_login();
 </div>
 <div>
     <div class="weui_cells_title">个人信息</div>
+
     <form id="form">
         <div class="weui_cells weui_cells_form">
             <div class="weui_cell">
@@ -85,14 +91,9 @@ check_login();
                            notmatchtips="请输入正确的手机号">
                 </div>
             </div>
-            <!--div class="weui_cell">
-                <div class="weui_cell_hd"><label class="weui_label">身份</label></div>
-                <div class="weui_cell_bd weui_cell_primary">
-                    <input class="weui_input" disabled="true" value="<?= $_SESSION['user']->state ?>"/>
-                </div>
-            </div-->
         </div>
     </form>
+
     <div class="weui_btn_area">
         <a class="weui_btn weui_btn_primary" href="javascript:" id="btn">更新</a>
     </div>

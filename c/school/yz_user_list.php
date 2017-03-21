@@ -4,7 +4,7 @@ require_once '../lib/fun.php';
 require_once "../lib/jssdk.php";
 check_login();
 
-$sql = "select * from sc_user where state!=2 ";
+$sql = "select * from sc_user  ";
 $res = $db->query($sql);
 $res->setFetchMode(PDO::FETCH_OBJ);
 $user = $res->fetchAll();

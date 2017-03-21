@@ -5,6 +5,19 @@ check_login();
 $sql = "select * from sc_question where answer_user_id = ".$_SESSION['user']->id." and is_del=0 order by c_time desc";
 $res = $db->query($sql);
 $questions = $res->fetchAll();
+
+    foreach ($questions as $key => $q) {
+        $sql_u = "select * from sc_user where id=" . $q['question_user_id'] . "   ";
+        $u_res = $db->query($sql_u);
+        $questions[$key]['question_user'] = $u_res->fetchAll();
+
+        $sql_u = "select * from sc_user where id=" . $q['answer_user_id'] . "   ";
+        $u_res = $db->query($sql_u);
+        $questions[$key]['answer_user'] = $u_res->fetchAll();
+
+        $questions[$key]['c_time'] = formatTime($questions[$key]['c_time']);
+    }
+//    var_dump($questions);
 ?>
 <!doctype html>
 <html>
@@ -34,8 +47,6 @@ $questions = $res->fetchAll();
 
 
     <style>
-
-        
         .weui_cells:before {
             top: 0;
             border-top: 0px solid #d9d9d9;
@@ -57,11 +68,18 @@ $questions = $res->fetchAll();
     <div class="weui_cells">
         <?php foreach($questions as $q){?>
         <div class="weui_cell">
-            <div class="weui_cell_hd"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC4AAAAuCAMAAABgZ9sFAAAAVFBMVEXx8fHMzMzr6+vn5+fv7+/t7e3d3d2+vr7W1tbHx8eysrKdnZ3p6enk5OTR0dG7u7u3t7ejo6PY2Njh4eHf39/T09PExMSvr6+goKCqqqqnp6e4uLgcLY/OAAAAnklEQVRIx+3RSRLDIAxE0QYhAbGZPNu5/z0zrXHiqiz5W72FqhqtVuuXAl3iOV7iPV/iSsAqZa9BS7YOmMXnNNX4TWGxRMn3R6SxRNgy0bzXOW8EBO8SAClsPdB3psqlvG+Lw7ONXg/pTld52BjgSSkA3PV2OOemjIDcZQWgVvONw60q7sIpR38EnHPSMDQ4MjDjLPozhAkGrVbr/z0ANjAF4AcbXmYAAAAASUVORK5CYII=" alt="" style="width:20px;margin-right:5px;display:block"></div>
+            <div class="weui_cell_hd">
+            <img src="<?=$q['question_user'][0]['headimgurl']?>" alt="" style="width:20px;margin-right:5px;display:block"></div>
             <div class="weui_cell_bd weui_cell_primary">
-                <p><?= $q['question_content']?><?= formatTime($q['c_time'])?></p>
+                <p><?= $q['question_content']?></p>
             </div>
-            <div class="weui_cell_ft"><a href="javascript:;" class="weui_btn weui_btn_mini weui_btn_primary">回答</a></div>
+            <div class="weui_cell_ft">
+            <?php if($q['answer_content']==""){ ?>
+                <a href="zj_send_answer.php?id=<?= $q['id']?>&user_id=<?= $q['question_user_id']?>" class="weui_btn weui_btn_mini weui_btn_primary">回答</a>
+            <?php }else{ ?>
+                已回答
+                            <?php }?>
+            </div>
         </div>
         <?php } ?>
         <?php if(count($questions)==0) {?>

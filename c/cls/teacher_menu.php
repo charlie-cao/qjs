@@ -98,14 +98,9 @@ check_login();
                     </div>
                     <div class="weui_cell_ft"></div>
                 </a>
-                <a class="weui_cell " href="teacher_order_user.php">
-                    <div class="weui_cell_bd weui_cell_primary">
-                        <p>审核成员</p>
-                    </div>
-                    <div class="weui_cell_ft"></div>
-                </a>
 
-                <a class="weui_cell " href="teacher_send_inv.php">
+
+                <a class="weui_cell " href="teacher_send_inv.php?id=<?=$_SESSION['cls']->id ?>">
                     <div class="weui_cell_bd weui_cell_primary">
                         <p>邀请家长</p>
                     </div>

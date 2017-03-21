@@ -6,7 +6,6 @@ check_login();
 
 $jssdk = new JSSDK($appid, $secret);
 $signPackage = $jssdk->GetSignPackage();
-//var_dump($_SESSION['tags']);
 ?>
 
 <!doctype html>
@@ -65,11 +64,14 @@ $signPackage = $jssdk->GetSignPackage();
                         d[d.length] = {name : "name",value: '<?=$_SESSION['user']->username?>'};
                         d[d.length] = {name : "headimg",value: '<?=$_SESSION['user']->headimgurl?>'};
                         d[d.length] = {name : "user_id",value: '<?=$_SESSION['user']->id ?>'};
+                        d[d.length] = {name : "school_id",value: '<?=$_SESSION['school_id'] ?>'};
+
+
 
                         $.ajax({
                             type: 'POST',
                             data: d,
-                            url: '../api/send_msg.php',
+                            url: '../api/school.php?a=send_school_msg',
                             dataType: 'json',
                             success: function (data) {
                                 $.toast("成功");
@@ -114,8 +116,9 @@ $signPackage = $jssdk->GetSignPackage();
                         isShowProgressTips: 1,
                         success: function (res) {
                             var serverId = res.serverId; // 返回图片的服务器端ID
-                            $.post("../api/save_pic.php?m=we_demo", {serverId: serverId}, function (data) {
-                                $('#preview').append('<li class="weui_uploader_file p_img" style="background-image:url(' + localId + ')"></li>');
+                            $.post("../api/school.php?a=save_pic", {serverId: serverId}, function (data) {
+
+                                $('#preview').append('<li class="weui_uploader_file p_img" style="background-image:url(' + data.src + ')"></li>');
                                 $('#files').append('<input value="' + data.src + '" data-id="'+localId+'"  type="hidden"  name="files[]" />');
 
                                 //重置图片索引
@@ -124,7 +127,6 @@ $signPackage = $jssdk->GetSignPackage();
 //                                    alert($(item).value());
                                     imgs[imgs.length] = $(item).data('id');
                                 })
-//                                alert(imgs);
 
 
 
@@ -208,3 +210,4 @@ $signPackage = $jssdk->GetSignPackage();
         </form>
     </body>
 </html>
+

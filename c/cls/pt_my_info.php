@@ -2,7 +2,6 @@
 require_once '../config.php';
 require_once '../lib/fun.php';
 check_login();
-//var_dump($_SESSION['user']);
 ?>
 <!doctype html>
 <html>
@@ -72,7 +71,7 @@ check_login();
             <div class="weui_cell">
                 <div class="weui_cell_hd"><label class="weui_label">备注名称</label></div>
                 <div class="weui_cell_bd weui_cell_primary">
-                    <input class="weui_input" name="username" required="" tips="请输入备注名称" placeholder="比如：梁爽园长"
+                    <input class="weui_input" name="username" required="" tips="请输入备注名称" placeholder="比如：梁爽老师"
                            value="<?= $_SESSION['user']->username ?>"/>
                     <input class="weui_input" name="id" type="hidden" value="<?= $_SESSION['user']->id ?>"/>
                 </div>

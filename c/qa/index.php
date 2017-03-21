@@ -6,8 +6,13 @@
  */
 require_once '../config.php';
 require_once '../lib/fun.php';
+
 $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
 
+
+if (isset($_GET['test'])) {
+    $_SESSION['test'] = $_GET['test'];
+}
 
 //交验唯一ID
 $state = $_GET['state'];
@@ -41,8 +46,23 @@ if (!isset($user)) {
     $_SESSION['user'] = $user;
 }
 
+//测试使用
+if ($_SESSION['test']) {
+    if ($_SESSION['test'] == "pt") {
+        $sql = "update sc_user set is_expert = 0 where id = " . $user->id;
+        $db->exec($sql);
+        $_SESSION['user']->is_expert = 0;
+    }
+    if ($_SESSION['test'] == "zj") {
+        $sql = "update sc_user set is_expert = 1 where id = " . $user->id;
+        $db->exec($sql);
+        $_SESSION['user']->is_expert = 1;
+    }
+}
+var_dump($_SESSION);
+
 //引导用户进入系统
-switch ($user->is_expert) {
+switch ($_SESSION['user']->is_expert) {
     case "0" :
         //  普通身份
         v("./pt_main.php");

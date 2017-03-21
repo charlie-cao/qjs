@@ -6,15 +6,6 @@ check_login();
 
 $jssdk = new JSSDK($appid, $secret);
 $signPackage = $jssdk->GetSignPackage();
-
-//var_dump($_SESSION);
-$sql = "select * from sc_tag where type = 'djt' ";
-$q = $db->query($sql);
-$tags = $q->fetchAll();
-
-
-
-
 ?>
 
 <!doctype html>
@@ -72,11 +63,15 @@ $tags = $q->fetchAll();
 
                         d[d.length] = {name : "name",value: '<?=$_SESSION['user']->username?>'};
                         d[d.length] = {name : "headimg",value: '<?=$_SESSION['user']->headimgurl?>'};
+                        d[d.length] = {name : "user_id",value: '<?=$_SESSION['user']->id ?>'};
+                        d[d.length] = {name : "school_id",value: '<?=$_SESSION['school_id'] ?>'};
+
+
 
                         $.ajax({
                             type: 'POST',
                             data: d,
-                            url: 'send_msg.php',
+                            url: '../api/school.php?a=send_school_msg',
                             dataType: 'json',
                             success: function (data) {
                                 $.toast("成功");
@@ -121,8 +116,9 @@ $tags = $q->fetchAll();
                         isShowProgressTips: 1,
                         success: function (res) {
                             var serverId = res.serverId; // 返回图片的服务器端ID
-                            $.post("http://qjs.isqgame.com/c/save_pic.php?m=we_demo", {serverId: serverId}, function (data) {
-                                $('#preview').append('<li class="weui_uploader_file p_img" style="background-image:url(' + localId + ')"></li>');
+                            $.post("../api/school.php?a=save_pic", {serverId: serverId}, function (data) {
+
+                                $('#preview').append('<li class="weui_uploader_file p_img" style="background-image:url(' + data.src + ')"></li>');
                                 $('#files').append('<input value="' + data.src + '" data-id="'+localId+'"  type="hidden"  name="files[]" />');
 
                                 //重置图片索引
@@ -131,7 +127,6 @@ $tags = $q->fetchAll();
 //                                    alert($(item).value());
                                     imgs[imgs.length] = $(item).data('id');
                                 })
-//                                alert(imgs);
 
 
 
@@ -182,8 +177,8 @@ $tags = $q->fetchAll();
                     </div>
                     <div class="weui_cell_bd weui_cell_primary">
                         <select class="weui_select" name="tag" id="tag">
-                        <?php foreach($tags as $key=>$val){ ?>
-                            <option value="<?=$val['index']?>"><?=$val['name']?></option>
+                        <?php foreach($_SESSION['tags'] as $key=>$val){ ?>
+                            <option value="<?=$val->o?>"><?=$val->name?></option>
                         <?php }?>
                         </select>
                     </div>
@@ -215,3 +210,4 @@ $tags = $q->fetchAll();
         </form>
     </body>
 </html>
+

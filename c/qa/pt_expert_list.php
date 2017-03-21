@@ -3,6 +3,12 @@ require_once '../config.php';
 require_once '../lib/fun.php';
 check_login();
 
+//获取本校域专家 3
+$sql = "select * from sc_user_cls where is_expert =1 "
+
+//获取全局专家   7
+
+
 
 ?>
 <!doctype html>
@@ -17,6 +23,23 @@ check_login();
     <script src="../public/zepto.min.js"></script>
     <script src="../public/updown.js"></script>
     <script src="../public/lazyimg.js"></script>
+    <style>
+    .weui_media_title{
+        float: left;
+        margin-right: 10px;
+    }
+    .weui-rater-box {
+        position: relative;
+        margin-right: 2px;
+        font-size: 10px;
+        width: 10px;
+        height: 10px;
+        color: rgb(255, 204, 102);
+    }
+    .weui_media_title {
+        float: none;
+        }
+    </style>
     <script>
             function addCell(data, i) {
                 var result = ''
@@ -29,7 +52,13 @@ check_login();
 
                     + '<div class="weui_media_bd" >'
                     + '<h4 class="weui_media_title">' + data[i].username + '</h4>'
-
+                    + '    <div class="weui-rater">'
+                    + '      <a data-num="0" class="weui-rater-box checked"> <span class="weui-rater-inner">★</span> </a>'
+                    + '      <a data-num="1" class="weui-rater-box checked"> <span class="weui-rater-inner">★</span> </a>'
+                    + '      <a data-num="2" class="weui-rater-box checked"> <span class="weui-rater-inner">★</span> </a>'
+                    + '      <a data-num="3" class="weui-rater-box checked"> <span class="weui-rater-inner">★</span> </a>'
+                    + '      <a data-num="4" class="weui-rater-box"> <span class="weui-rater-inner">★</span> </a>'
+                    + '       </div>'
                     + '<p class="weui_media_desc">'
                     + data[i].memo
                     + '</p>'
@@ -193,10 +222,26 @@ check_login();
 <body ontouchstart>
 <div class="weui-header bg-green">
     <div class="weui-header-left"> <a href="pt_main.php" class="icon icon-109 f-white">返回</a>  </div>
-    <h1 class="weui-header-title">名师</h1>
+    <h1 class="weui-header-title">教育家</h1>
     <div class="weui-header-right"></div>
 </div>
+    <div class="page-hd" style="padding: 4px;height: 34px;
+    background: white;">
+        <div class="weui-flex">
+            <div class="weui-flex-item">
 
+            </div>
+            <div class="weui-flex-item">
+                <div class="weui_tab_nav">
+                    <a href="pt_main.php?tag=0" class="weui_navbar_item weui_nav_green <?=($_GET['tag']==0)?"bg_green":""?>"> 校内 </a>
+                    <a href="pt_main.php?tag=1" class="weui_navbar_item weui_nav_green <?=($_GET['tag']==1)?"bg_green":""?>"> 校外 </a>
+                </div>
+            </div>
+
+        <div class="weui-flex-item">
+
+        </div>
+    </div>
     <div class="weui_panel weui_panel_access" style="     margin-top: 0px; ">
         <div class="weui_panel_bd weui_cells moments">
         </div>

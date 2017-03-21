@@ -1,3 +1,19 @@
+<?php
+require_once '../config.php';
+require_once '../lib/fun.php';
+check_login();
+
+$sql = "select * from sc_user_cls where user_id=".$_SESSION['user']->id;
+$res = $db->query($sql);
+$my_cls = $res->fetchAll();
+
+foreach($my_cls  as $key=>$val){
+    $sql = "select * from sc_cls where id=".$val['cls_id']." limit 1";
+    $res = $db->query($sql);
+    $my_cls[$key]['cls'] = $res->fetch();
+}
+//var_dump($my_cls);
+?>
 <!doctype html>
 <html>
 <head>
@@ -10,6 +26,10 @@
     <script src="../public/zepto.min.js"></script>
     <script src="../public/iscroll.js"></script>
     <script>
+        function exit(id){
+
+        }
+
         $(function () {
 //            $('.weui_tab').tab();
         });
@@ -27,69 +47,31 @@
                     <a href="teacher_menu.php" class="icon icon-109 f-white">返回</a>
                 </div>
             <h1 class="weui-header-title">班级管理</h1>
-            <div class="weui-header-right"><a href="cls_2_11.php" class="icon icon-36 f-white"> 创建班级</a></div>
+            <div class="weui-header-right"><a href="teacher_add_cls.php" class="icon icon-36 f-white"> 创建班级</a></div>
         </div>
 
 
-        <div class="weui_cells" style="margin-top: 0px;">
-            <div class="weui_cells_title">我创建的班级</div>
-
-            <div class="weui_cell">
-                <div class="weui_cell_bd weui_cell_primary">
-                    <p>小一班级</p>
-                </div>
-                <div class="weui_cell_ft">
-                    <a href="cls_2_2.php" class="weui_btn weui_btn_mini weui_btn_warn">进入</a>
-                    <a href="cls_2_3.php" class="weui_btn weui_btn_mini weui_btn_warn">管理</a>
-                    <a href="#" class="weui_btn weui_btn_mini weui_btn_warn">删除</a>
-                </div>
-            </div>
-            <div class="weui_cell">
-                <div class="weui_cell_bd weui_cell_primary">
-                    <p>小二班级 <label class="weui-label-s">当前班级</label></p>
-                </div>
-                <div class="weui_cell_ft">
-                    
-                    <a href="cls_2_3.php" class="weui_btn weui_btn_mini weui_btn_warn">管理</a>
-                    <a href="#" class="weui_btn weui_btn_mini weui_btn_warn">删除</a>
-                </div>
-            </div>
-        </div>
         <div class="weui_cells" style="margin-top: 0px;">
             <div class="weui_cells_title">我加入的班级</div>
-
+            <?php foreach($my_cls as $key=>$val ) { ?>
             <div class="weui_cell">
                 <div class="weui_cell_bd weui_cell_primary">
-                    <p>小三班级</p>
+                    <p><?=$val['cls']['name']?></p>
                 </div>
                 <div class="weui_cell_ft">
-                    <a href="cls_1_2.php" class="weui_btn weui_btn_mini weui_btn_warn">进入</a>
-                    <a href="#" class="weui_btn weui_btn_mini weui_btn_warn">退出</a>
+                <?php if($val['cls']['id'] == $_SESSION['cls_id']){ ?>
+                    <a href="teacher_main.php?cls_id=<?=$val['cls']['id']?>" class="weui_btn weui_btn_mini weui_btn_warn">当前班级</a>
+                <?php }else{ ?>
+                    <a href="teacher_main.php?cls_id=<?=$val['cls']['id']?>" class="weui_btn weui_btn_mini weui_btn_warn">进入</a>
+                <?php } ?>
+                    <a href="javascript:;" onclick="exit('<?=$val['cls']['id']?>')" class="weui_btn weui_btn_mini weui_btn_warn">退出</a>
                 </div>
             </div>
-            <div class="weui_cell">
-                <div class="weui_cell_bd weui_cell_primary">
-                    <p>小四班级</p>
-                    
-                </div>
-                <div class="weui_cell_ft">
-                    <a href="cls_1_2.php" class="weui_btn weui_btn_mini weui_btn_warn">进入</a>
-                    <a href="#" class="weui_btn weui_btn_mini weui_btn_warn">退出</a>
-                </div>
-            </div>
-            <div class="weui_cell">
-                <div class="weui_cell_bd weui_cell_primary">
-                    <p>小五班级</p>
-                </div>
-                <div class="weui_cell_ft">
-                    <a href="cls_1_2.php" class="weui_btn weui_btn_mini weui_btn_warn">进入</a>
-                    <a href="#" class="weui_btn weui_btn_mini weui_btn_warn">退出</a>
-                </div>
-            </div>
+            <?php } ?>
         </div>
-        <div>备注 园长可以管理和删除所有班级</div>
+
     </div>
-    
+
 </div>
 </body>
 </html>

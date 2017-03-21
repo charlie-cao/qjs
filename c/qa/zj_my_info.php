@@ -1,3 +1,37 @@
+<?php
+require_once '../config.php';
+require_once '../lib/fun.php';
+//var_dump($_SESSION);
+check_login();
+
+$sql = "SELECT count(*) as c FROM `sc_question` WHERE `answer_user_id` = ".$_SESSION['user']->id;
+$res = $db->query($sql);
+$re = $res->fetch();
+$money_count = $re['c'];
+
+$sql = "SELECT count(*) as c FROM `sc_question` WHERE answer_content is not null and `answer_user_id` = ".$_SESSION['user']->id;
+$res = $db->query($sql);
+$re = $res->fetch();
+$answer_count = $re['c'];
+
+
+$sql = "SELECT sum(play_num) as c FROM `sc_question` WHERE answer_content is not null and `answer_user_id` = ".$_SESSION['user']->id;
+$res = $db->query($sql);
+$re = $res->fetch();
+$play_count = $re['c'];
+
+$sql = "SELECT sum(up_num) as c FROM `sc_question` WHERE answer_content is not null and `answer_user_id` = ".$_SESSION['user']->id;
+$res = $db->query($sql);
+$re = $res->fetch();
+$up_num_count = $re['c'];
+
+var_dump($money_count);
+var_dump($answer_count);
+var_dump($play_count);
+var_dump($up_num_count);
+
+
+?>
 <!doctype html>
 <html>
 
@@ -34,94 +68,75 @@
             -webkit-transform-origin: 0 0;
             transform-origin: 0 0;
         }
+        .weui_grid_icon2 {
+            text-align: center;
+        }
     </style>
 
 
 </head>
 
 <body ontouchstart="" style="background-color: #f8f8f8;">
-
-
-    
-
-    <div class="weui_tab tab-bottom">
-        <div class="weui_tab_bd">
-
-
             <div class="weui-header bg-green">
                 <div class="weui-header-left"> <a href="zj_main.php" class="icon icon-109 f-white">返回</a> </div>
                 <h1 class="weui-header-title">个人面板</h1>
                 <div class="weui-header-right"> </div>
             </div>
 
-            <div class="weui_grids grids-small">
+     <div class="weui_cells_title">个人</div>
+     <div class="weui_cells weui_cells_access">
+         <a class="weui_cell" href="./zj_change_info.php">
+             <div class="weui_cell_hd"></div>
+             <div class="weui_cell_bd weui_cell_primary">
+                 <p>个人信息</p>
+             </div>
+             <div class="weui_cell_ft"></div>
+         </a>
+     </div>
+
+
+
+    </div>
+     <div class="weui_cells_title">统计</div>
+            <div class="weui_grids grids-small" style="background-color: #fff;">
             <a href="javascript:;" class="grid">
-                <div class="weui_grid_icon">
-                    125
+                <div class="weui_grid_icon2">
+                    <?=$money_count?>
                 </div>
                 <p class="weui_grid_label">
                     总收入
                 </p>
             </a>
             <a href="javascript:;" class="grid">
-                <div class="weui_grid_icon">
-                    125
+                <div class="weui_grid_icon2">
+                    <?=$answer_count?>
                 </div>
                 <p class="weui_grid_label">
                     回答次数
                 </p>
             </a>
             <a href="javascript:;" class="grid">
-                <div class="weui_grid_icon">
-                    125
+                <div class="weui_grid_icon2">
+                    <?=$play_count?>
                 </div>
                 <p class="weui_grid_label">
                     被偷听次数
                 </p>
             </a>
             <a href="javascript:;" class="grid">
-                <div class="weui_grid_icon">
-                    125
+                <div class="weui_grid_icon2">
+                    <?=$up_num_count?>
                 </div>
                 <p class="weui_grid_label">
                     被点赞次数
                 </p>
             </a>
-            
-        </div>
-        <div class="weui_cells_title">我的问答</div>
-        <div class="weui_cells">
-        <div class="weui_cell">
-            <div class="weui_cell_hd"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC4AAAAuCAMAAABgZ9sFAAAAVFBMVEXx8fHMzMzr6+vn5+fv7+/t7e3d3d2+vr7W1tbHx8eysrKdnZ3p6enk5OTR0dG7u7u3t7ejo6PY2Njh4eHf39/T09PExMSvr6+goKCqqqqnp6e4uLgcLY/OAAAAnklEQVRIx+3RSRLDIAxE0QYhAbGZPNu5/z0zrXHiqiz5W72FqhqtVuuXAl3iOV7iPV/iSsAqZa9BS7YOmMXnNNX4TWGxRMn3R6SxRNgy0bzXOW8EBO8SAClsPdB3psqlvG+Lw7ONXg/pTld52BjgSSkA3PV2OOemjIDcZQWgVvONw60q7sIpR38EnHPSMDQ4MjDjLPozhAkGrVbr/z0ANjAF4AcbXmYAAAAASUVORK5CYII=" alt="" style="width:20px;margin-right:5px;display:block"></div>
-            <div class="weui_cell_bd weui_cell_primary">
-                <p>为什么为什么为什么</p>
-            </div>
-            <div class="weui_cell_ft">125个赞</div>
-        </div>        
-        <div class="weui_cell">
-            <div class="weui_cell_hd"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC4AAAAuCAMAAABgZ9sFAAAAVFBMVEXx8fHMzMzr6+vn5+fv7+/t7e3d3d2+vr7W1tbHx8eysrKdnZ3p6enk5OTR0dG7u7u3t7ejo6PY2Njh4eHf39/T09PExMSvr6+goKCqqqqnp6e4uLgcLY/OAAAAnklEQVRIx+3RSRLDIAxE0QYhAbGZPNu5/z0zrXHiqiz5W72FqhqtVuuXAl3iOV7iPV/iSsAqZa9BS7YOmMXnNNX4TWGxRMn3R6SxRNgy0bzXOW8EBO8SAClsPdB3psqlvG+Lw7ONXg/pTld52BjgSSkA3PV2OOemjIDcZQWgVvONw60q7sIpR38EnHPSMDQ4MjDjLPozhAkGrVbr/z0ANjAF4AcbXmYAAAAASUVORK5CYII=" alt="" style="width:20px;margin-right:5px;display:block"></div>
-            <div class="weui_cell_bd weui_cell_primary">
-                <p>为什么为什么为什么</p>
-            </div>
-            <div class="weui_cell_ft">125个赞</div>
-
-        </div>        
-        <div class="weui_cell">
-            <div class="weui_cell_hd"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC4AAAAuCAMAAABgZ9sFAAAAVFBMVEXx8fHMzMzr6+vn5+fv7+/t7e3d3d2+vr7W1tbHx8eysrKdnZ3p6enk5OTR0dG7u7u3t7ejo6PY2Njh4eHf39/T09PExMSvr6+goKCqqqqnp6e4uLgcLY/OAAAAnklEQVRIx+3RSRLDIAxE0QYhAbGZPNu5/z0zrXHiqiz5W72FqhqtVuuXAl3iOV7iPV/iSsAqZa9BS7YOmMXnNNX4TWGxRMn3R6SxRNgy0bzXOW8EBO8SAClsPdB3psqlvG+Lw7ONXg/pTld52BjgSSkA3PV2OOemjIDcZQWgVvONw60q7sIpR38EnHPSMDQ4MjDjLPozhAkGrVbr/z0ANjAF4AcbXmYAAAAASUVORK5CYII=" alt="" style="width:20px;margin-right:5px;display:block"></div>
-            <div class="weui_cell_bd weui_cell_primary">
-                <p>为什么为什么为什么</p>
-            </div>
-            <div class="weui_cell_ft">125个赞</div>
 
         </div>
-    
-    </div>
 
 
 
 
-        </div>
-    </div>
 
 </body>
 
