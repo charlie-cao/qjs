@@ -1,4 +1,5 @@
 <?php
+
 require_once '../config.php';
 require_once '../lib/fun.php';
 require_once "../lib/jssdk.php";
@@ -17,19 +18,22 @@ if (!isset($_SESSION['user']->openid)) {
 
 //检查用户并更新用户SESSION信息
 $_SESSION['user'] = check_user($_SESSION['user']);
+
+
 ?>
 <!doctype html>
 <html>
 
 <head>
     <meta charset="utf-8">
-    <title></title>
+    <title>我的提问</title>
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
     <link rel="stylesheet" href="../public/style/weui.css"/>
     <link rel="stylesheet" href="../public/style/weui2.css"/>
     <link rel="stylesheet" href="../public/style/weui3.css"/>
     <script src="../public/zepto.min.js"></script>
     <script src="../public/jweixin-1.2.0.js"></script>
+
     <script>
         wx.config({
             debug: false,
@@ -167,14 +171,13 @@ $_SESSION['user'] = check_user($_SESSION['user']);
 <body ontouchstart="" style="background-color: #f8f8f8;">
 
 <div class="weui-header bg-green">
-    <div class="weui-header-left"><a href="zj_main.php" class="icon icon-109 f-white">返回</a></div>
-    <h1 class="weui-header-title">我的回答</h1>
+    <div class="weui-header-left"><a href="zj_my_info.php" class="icon icon-109 f-white">返回</a></div>
+    <h1 class="weui-header-title">我的提问</h1>
     <div class="weui-header-right"></div>
 </div>
-
 <?php
 
-$sql = "select * from sc_question where answer_user_id = " . $_SESSION['user']->id . " and is_del=0 order by c_time desc";
+$sql = "select * from sc_question where question_user_id = " . $_SESSION['user']->id . " and is_del=0 order by c_time desc";
 $res = $db->query($sql);
 $questions = $res->fetchAll();
 
@@ -196,18 +199,21 @@ foreach ($questions as $key => $q) {
 <div class="weui_cells" style="margin-top:0px;">
     <?php foreach ($questions as $q) { ?>
         <div class="weui_cell">
-            <div class="weui_cell_hd">
-                <img src="<?= $q['question_user'][0]['headimgurl'] ?>" alt=""
-                     style="width:20px;margin-right:5px;display:block">
-            </div>
             <div class="weui_cell_bd weui_cell_primary">
                 <p><?= $q['question_content'] ?></p>
             </div>
-
+            <div class="weui_cell_hd">
+                <img src="<?= $q['answer_user'][0]['headimgurl'] ?>" alt=""
+                     style="width:20px;margin-right:5px;display:block">
+            </div>
             <div class="weui_cell_ft">
                 <?php if ($q['answer_content'] == "") { ?>
-                    <a href="g_send_answer.php?id=<?= $q['id'] ?>&user_id=<?= $q['question_user_id'] ?>"
-                       class="weui_btn weui_btn_mini weui_btn_primary">回答</a>
+
+                    <a id="paragraphExtender" class="paragraphExtender "
+                       style="color: #cccccc;background-color: #FF6600;">
+                        <span class="icon icon-52" style="padding-right:4px"></span>
+                        尚未回答
+                    </a>
                 <?php } else { ?>
                     <a id="paragraphExtender" class="paragraphExtender" style="color: white;"
                        onclick="playVoice(this)"
@@ -227,6 +233,7 @@ foreach ($questions as $key => $q) {
         </div>
     <?php } ?>
 </div>
-</body>
 
+</body>
 </html>
+

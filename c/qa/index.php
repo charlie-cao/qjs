@@ -1,5 +1,4 @@
 <?php
-
 /**
  * 千家师入口
  * 必须参数 state = 校园ID
@@ -8,11 +7,6 @@ require_once '../config.php';
 require_once '../lib/fun.php';
 
 $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
-
-
-if (isset($_GET['test'])) {
-    $_SESSION['test'] = $_GET['test'];
-}
 
 //交验唯一ID
 $state = $_GET['state'];
@@ -33,33 +27,27 @@ if (!isset($school)) {
     $_SESSION['school'] = $school;
 }
 
-//交验用户
-$user = wx_userinfo($appid, $secret, $redirect_uri, $state);
-//检查该用户是否已经入库，如果没有-》入库，如果已经入库-》更新最后登录时间，获取用户身份
-$user = check_user($user);
-if (!isset($user)) {
-    //身份验证错误，禁止登录
-    echo "该用户不存在";
-    exit;
-} else {
-    //用户更新信息后需要再次访问入口文件 更新用户个人信息
-    $_SESSION['user'] = $user;
+//检查用户是否已经登录
+if (!isset($_SESSION['user']->openid)) {
+    //未登录 微信登录
+    $_SESSION['user'] = wx_userinfo($appid, $secret, $redirect_uri, $state);
 }
 
-//测试使用
-if ($_SESSION['test']) {
-    if ($_SESSION['test'] == "pt") {
-        $sql = "update sc_user set is_expert = 0 where id = " . $user->id;
-        $db->exec($sql);
-        $_SESSION['user']->is_expert = 0;
-    }
-    if ($_SESSION['test'] == "zj") {
-        $sql = "update sc_user set is_expert = 1 where id = " . $user->id;
-        $db->exec($sql);
-        $_SESSION['user']->is_expert = 1;
-    }
+//检查用户并更新用户SESSION信息
+$_SESSION['user'] = check_user($_SESSION['user']);
+
+//判断是否校园专家 根据是否为专家身份进行用户引入
+$sql = "select * from sc_user_school where user_id=".$_SESSION['user']->id." and school_id=".$_SESSION['school']->id;
+$q = $db->query($sql);
+$r = $q->fetch();
+
+if($r['is_leader']==1 || $r['is_teacher']==1||$r['is_assistant']==1){
+    v("./zj_main.php");
+}else{
+    v("./pt_main.php");
 }
-var_dump($_SESSION);
+
+exit;
 
 //引导用户进入系统
 switch ($_SESSION['user']->is_expert) {

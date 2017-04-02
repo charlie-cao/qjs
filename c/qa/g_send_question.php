@@ -2,7 +2,6 @@
 require_once '../config.php';
 require_once '../lib/fun.php';
 
-
 $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
 
 $state = $_GET['state'];
@@ -16,22 +15,20 @@ if (!isset($_SESSION['user']->openid)) {
 $_SESSION['user'] = check_user($_SESSION['user']);
 
 
-//var_dump($_SESSION['user']);
 $sql = "select * from sc_user where id = " . $_REQUEST['id'] . " limit 1";
 $res = $db->query($sql);
 $user = $res->fetch();
 
 
-//error_reporting(E_ERROR);
 require_once "../lib/WxPay.Api.php";
 require_once "WxPay.JsApiPay.php";
-//require_once 'log.php';
 
+//require_once 'log.php';
 //初始化日志
 //$logHandler= new CLogFileHandler("../logs/".date('Y-m-d').'.log');
 //$log = Log::Init($logHandler, 15);
-
 //打印输出数组信息
+
 function printf_info($data)
 {
     foreach ($data as $key => $value) {
@@ -39,6 +36,7 @@ function printf_info($data)
     }
 }
 
+//①、获取用户openid
 $tools = new JsApiPay();
 //$openId = $tools->GetOpenid();
 $openId = $_SESSION['user']->openid;
@@ -59,10 +57,8 @@ $order = WxPayApi::unifiedOrder($input);
 //printf_info($order);
 $jsApiParameters = $tools->GetJsApiParameters($order);
 
-
 //获取共享收货地址js函数参数
 //$editAddress = $tools->GetEditAddressParameters();
-
 //var_dump($user);
 ?>
 
@@ -70,7 +66,7 @@ $jsApiParameters = $tools->GetJsApiParameters($order);
 <html>
 <head>
     <meta charset="utf-8">
-    <title></title>
+    <title>提问</title>
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
     <link rel="stylesheet" href="../public/style/weui.css"/>
     <link rel="stylesheet" href="../public/style/weui2.css"/>
@@ -95,7 +91,6 @@ $jsApiParameters = $tools->GetJsApiParameters($order);
                     $(this).val($(this).val().substring(0, max));
                     $(this).focus();
                     $('#count').text(len - 1);
-
                 } else {
                     $(this).closest('.weui_cell').removeClass('weui_cell_warn');
                 }
@@ -105,20 +100,6 @@ $jsApiParameters = $tools->GetJsApiParameters($order);
                 if ($("#content").val() == "") {
                     $.toast("内容不能为空", "forbidden");
                 } else {
-//                    var d = $('#sendMsg').serializeArray();
-//                    $.ajax({
-//                        type: 'POST',
-//                        data: d,
-//                        url: '../api/qa.php?a=send_question',
-//                        dataType: 'json',
-//                        success: function (data) {
-//                            alert(data);
-//                            console.log(data);
-//                            $.toast("提问成功");
-////                                location.href = "pt_my_question.php";
-////                                window.history.back(-1);
-//                        }
-//                    });
                     callpay();
                 }
             });
@@ -145,8 +126,8 @@ $jsApiParameters = $tools->GetJsApiParameters($order);
                             success: function (data) {
                                 console.log(data);
                                 $.toast("提问成功");
-                                location.href = "pt_my_question.php";
-                                window.history.back(-1);
+                                location.href = "g_my_question.php";
+//                                window.history.back(-1);
                             }
                         });
 
@@ -184,7 +165,6 @@ $jsApiParameters = $tools->GetJsApiParameters($order);
 </div>
 <div class="weui_cells ">
     <form id="sendMsg">
-        <input type="hidden" name="school_id" value="<?= $_SESSION['school']->id ?>">
         <input type="hidden" name="question_user_id" value="<?= $_SESSION['user']->id ?>">
         <input type="hidden" name="answer_user_id" value="<?= $user['id'] ?>">
         <div class="weui_cell">
