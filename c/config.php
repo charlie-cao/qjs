@@ -1,7 +1,7 @@
 <?php
 
 //debug
-ini_set("display_errors", "On");
+ini_set("display_errors", "Off");
 error_reporting(E_ALL);
 ini_set('date.timezone','Asia/Shanghai'); 
 
@@ -24,9 +24,18 @@ try {
     die("Error!: " . $e->getMessage() . "<br/>");
 }
 
-
-
+//公共号id
 $appid = "wx8dfb25342ca7f279";
 $secret = "d35b3b82fc417eeae0c663fd59eb32a3";
+
+//服务器
+$server_host = 'http://'.$_SERVER['HTTP_HOST'];
+
+//短语音路径
+$voice_path = "../upload/voice/";
+
+//照片存储路径
+$image_path = "../upload/image/";
+
 
 ?>
