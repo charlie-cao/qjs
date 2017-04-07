@@ -411,7 +411,7 @@ if (!isset($_GET['tag'])) {
     </div>
     <h1 class="weui-header-title">千家师 专家</h1>
     <div class="weui-header-right">
-        <a href="zj_question_list.php" class="icon icon-80 f-white" style="font-size: 26px;"></a>
+        <a href="zj_expert_list.php" class="icon icon-99 f-white" style="font-size: 26px;"></a>
     </div>
 </div>
 

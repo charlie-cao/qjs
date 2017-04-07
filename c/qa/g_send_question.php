@@ -100,6 +100,21 @@ $jsApiParameters = $tools->GetJsApiParameters($order);
                 if ($("#content").val() == "") {
                     $.toast("内容不能为空", "forbidden");
                 } else {
+//                    var d = $('#sendMsg').serializeArray();
+//
+//                    $.ajax({
+//                        type: 'POST',
+//                        data: d,
+//                        url: '../api/qa.php?a=send_question',
+//                        dataType: 'json',
+//                        success: function (data) {
+//                            console.log(data);
+//                            $.toast("提问成功");
+////                            location.href = "g_my_question.php";
+////                                window.history.back(-1);
+//                        }
+//                    });
+
                     callpay();
                 }
             });
@@ -126,8 +141,8 @@ $jsApiParameters = $tools->GetJsApiParameters($order);
                             success: function (data) {
                                 console.log(data);
                                 $.toast("提问成功");
-                                location.href = "g_my_question.php";
-//                                window.history.back(-1);
+//                                location.href = "g_my_question.php";
+                                window.history.back(-1);
                             }
                         });
 

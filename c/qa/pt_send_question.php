@@ -145,7 +145,7 @@ $jsApiParameters = $tools->GetJsApiParameters($order);
                             success: function (data) {
                                 console.log(data);
                                 $.toast("提问成功");
-                                location.href = "pt_my_question.php";
+//                                location.href = "pt_my_question.php";
                                 window.history.back(-1);
                             }
                         });
