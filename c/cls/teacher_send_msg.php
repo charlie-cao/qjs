@@ -50,6 +50,9 @@ $signPackage = $jssdk->GetSignPackage();
                     $('#count').text(len);
                     if (len > max) {
                         $(this).closest('.weui_cell').addClass('weui_cell_warn');
+                        $(this).val($(this).val().substring(0, max));
+                        $(this).focus();
+                        $('#count').text(len - 1);
                     } else {
                         $(this).closest('.weui_cell').removeClass('weui_cell_warn');
                     }
@@ -76,7 +79,8 @@ $signPackage = $jssdk->GetSignPackage();
                             dataType: 'json',
                             success: function (data) {
                                 $.toast("成功");
-                                window.history.back(-1);
+                                location.href = "teacher_main.php?cls_id=<?=$_SESSION['cls_id']?>";
+
                             },
                             error:function(xhr, type,e){
 
@@ -144,10 +148,13 @@ $signPackage = $jssdk->GetSignPackage();
                                 if (imgcount <= 0) {
                                     $("#files").hide();
                                 }
+
+                                //异步发送图片，防止序列错误
+                                if (localIds.length > 0) {
+                                    syncUpload(localIds);
+                                }
+
                             }, 'json');
-                            if (localIds.length > 0) {
-                                syncUpload(localIds);
-                            }
                         }
                     });
                 };
@@ -168,7 +175,7 @@ $signPackage = $jssdk->GetSignPackage();
                 <div class="weui_cell">
                     <div class="weui_cell_bd weui_cell_primary">
                         <textarea id="content" name="content" class="weui_textarea" placeholder="输入内容" rows="3"></textarea>
-                        <div class="weui_textarea_counter"><span id='count'>0</span>/<span id='count_max'>60</span></div>
+                        <div class="weui_textarea_counter"><span id='count'>0</span>/<span id='count_max'>120</span></div>
                     </div>
                 </div>
 
@@ -178,9 +185,10 @@ $signPackage = $jssdk->GetSignPackage();
                     </div>
                     <div class="weui_cell_bd weui_cell_primary">
                         <select class="weui_select" name="tag" id="tag">
-                        <?php foreach($_SESSION['tags'] as $key=>$val){ ?>
-                            <option value="<?=$val->o?>"><?=$val->name?></option>
-                        <?php }?>
+                            <option value="">动态</option>
+                            <?php foreach ($_SESSION['school_tags'] as $key => $val) { ?>
+                                <option value="<?= $val['id'] ?>"><?= $val['name'] ?></option>
+                            <?php } ?>
                         </select>
                     </div>
                 </div>

@@ -143,11 +143,11 @@ function v($url){
     header("location:{$url}");
 }
 
-function check_login(){
-    if(!isset($_SESSION['user'])){
-        v("index.php");
-    }
-}
+//function check_login(){
+//    if(!isset($_SESSION['user']->openid)){
+//        v("index.php");
+//    }
+//}
 
 
 function get_school_info($id){

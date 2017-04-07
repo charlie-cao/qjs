@@ -12,48 +12,8 @@ if (!isset($_REQUEST['a'])) {
     $json["end_time"] = "";
     $json["data"] = null;
 
-    switch ($_REQUEST['a']) {
-        case "save_pic":
-            save_pic();
-            break;
-        case "update_user_info":
-            update_user_info();
-            break;
-        case "update_cls_info":
-            update_cls_info();
-            break;
-        case "get_cls_msg_list":
-            get_cls_msg_list();
-            break;
-        case "get_new_cls_msg_list":
-            get_new_cls_msg_list();
-            break;
-        case "send_cls_msg":
-            send_cls_msg();
-            break;
-        case "del_cls_msg":
-            del_cls_msg();
-            break;
-        case "up_cls_msg":
-            up_cls_msg();
-            break;
-        case "add_cls":
-            add_cls();
-            break;
-        case "check_inv_code":
-            check_inv_code();
-            break;
-        case "change_teacher":
-            change_teacher();
-            break;
-        case "comment_cls_msg":
-            comment_cls_msg();
-            break;
-        case "del_comment":
-            del_comment();
-            break;
+    call_user_func($_REQUEST['a']);
 
-    }
     $json["end_time"] = getMillisecond();
     echo json_encode($json);
 }
@@ -121,6 +81,10 @@ function check_inv_code() {
 
 
     if (count($r) == 1) {
+        //如果用户是第一次登录 将用户加入学校
+        $sql = "insert into sc_user_school set school_id=".$_REQUEST['school_id'].",user_id=".$_REQUEST['user_id'].",c_time=".time();
+        $db->exec($sql);
+
         join_cls($_REQUEST['school_id'], $_REQUEST['cls_id'], $_REQUEST['user_id']);
         $json['msg'] = "success";
         $json['id'] = $_REQUEST['cls_id'];
@@ -156,10 +120,49 @@ function add_cls() {
 
         //班主任默认加入班级
         join_cls($_REQUEST['school_id'], $json['id'], $_REQUEST['user_id'], 1);
+
+        $tag_name = array("通知","成长秀");
+        foreach ($tag_name as $tag){
+            init_cls_tag($_REQUEST['school_id'],$json['id'],$tag);
+        }
+
     } else {
         $json['msg'] = "success";
         $json['info'] = $db->errorInfo();
     }
+}
+
+function init_cls_tag($school_id,$cls_id,$tag_name){
+    global $db;
+    global $json;
+    $sql = "select * from sc_cls_tag where cls_id=" . $cls_id;
+    $q = $db->query($sql);
+    $rs = $q->fetchAll();
+
+    if (count($rs) > 0) {
+        $o = count($rs);
+    } else {
+        $o = 0;
+    }
+
+    $sql = "INSERT INTO `sc_cls_tag` ("
+        . "`id`, "
+        . "`name`, "
+        . "`school_id`, "
+        . "`cls_id`, "
+        . "`o`, "
+        . "`c_time`, "
+        . "`is_del`) VALUES ("
+        . "NULL, "
+        . "'" . $tag_name . "', "
+        . "'" . $school_id . "', "
+        . "'" . $cls_id . "', "
+        . "'" . $o . "', "
+        . "'" . time() . "', "
+        . "'0');";
+
+    $db->exec($sql);
+
 }
 
 function join_cls($school_id, $cls_id, $user_id, $is_teacher = 0) {
@@ -250,9 +253,19 @@ function get_cls_msg_list() {
     $q_res = $db->query($sql);
     $q_res = $q_res->fetchAll();
 
+
+
+    $tag_name = array();
+    foreach ($_SESSION['cls_tags'] as $key=>$val){
+        $tag_name[$val['id']] = $val['name'];
+    }
+
     $u_id = array();
     $q_id = array();
     foreach ($q_res as $key => $q) {
+
+        $q_res[$key]['tag_name'] = $tag_name[$q['tag']];
+
         $sql_u = "select * from sc_user where id=" . $q['user_id'] . "   ";
         $u_res = $db->query($sql_u);
         $q_res[$key]['user'] = $u_res->fetchAll();
@@ -382,7 +395,7 @@ function send_cls_msg() {
         $data['user_id'] = $_REQUEST['user_id'];
         $data['cls_id'] = $_REQUEST['cls_id'];
         $data['content'] = $_REQUEST['content'];
-        $data['tag'] = $_REQUEST['tag'];
+        $data['tag'] = $_REQUEST['tag']?$_REQUEST['tag']:"NULL";
         $data['up'] = "0";
         $data['c_time'] = time();
 
@@ -408,7 +421,7 @@ function send_cls_msg() {
                 . "'" . $data['user_id'] . "', "
                 . "'" . $data['cls_id'] . "', "
                 . "'" . $data['content'] . "', "
-                . "'" . $data['tag'] . "', "
+                 . $data['tag'] . ", "
                 . "'" . $data['up'] . "', "
                 . "'" . $data['c_time'] . "', "
                 . "'" . $data['imgs'] . "', "

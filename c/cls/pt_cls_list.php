@@ -3,16 +3,18 @@ require_once '../config.php';
 require_once '../lib/fun.php';
 check_login();
 
-$sql = "select * from sc_user_cls where user_id=".$_SESSION['user']->id;
+//var_dump($_SESSION);
+
+$sql = "select *,sc.name as school_name,c.name as cls_name from sc_user_cls as uc left join sc_school as sc on uc.school_id=sc.id left join sc_cls as c on uc.cls_id=c.id  where uc.school_id=".$_SESSION['school_id']." and  uc.user_id=".$_SESSION['user']->id;
 $res = $db->query($sql);
 $my_cls = $res->fetchAll();
 
-foreach($my_cls  as $key=>$val){
-    $sql = "select * from sc_cls where id=".$val['cls_id']." limit 1";
-    $res = $db->query($sql);
-    $my_cls[$key]['cls'] = $res->fetch();
-}
-//var_dump($my_cls);
+//判断该用户在学校中是否为班主任
+$sql = "select * from sc_user_school where school_id=".$_SESSION['school_id']." and user_id=".$_SESSION['user']->id;
+$q = $db->query($sql);
+$r = $q->fetch();
+
+
 ?>
 <!doctype html>
 <html>
@@ -47,26 +49,30 @@ foreach($my_cls  as $key=>$val){
                     <a href="pt_menu.php" class="icon icon-109 f-white">返回</a>
                 </div>
             <h1 class="weui-header-title">班级列表</h1>
-            <div class="weui-header-right"></div>
+            <div class="weui-header-right">
+                <?php if($r['is_teacher']) { ?>
+                <a href="pt_add_cls.php" class="icon icon-36 f-white"> 创建班级</a>
+                <?php } ?>
+            </div>
+
         </div>
 
 
         <div class="weui_cells" style="margin-top: 0px;">
             <div class="weui_cells_title">我加入的班级</div>
             <?php foreach($my_cls as $key=>$val ) { ?>
-            <div class="weui_cell">
-                <div class="weui_cell_bd weui_cell_primary">
-                    <p><?=$val['cls']['name']?></p>
+                <div class="weui_cell">
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p><?=$val['school_name']?>-<?=$val['cls_name']?></p>
+                    </div>
+                    <div class="weui_cell_ft">
+                        <?php if($val['cls_id'] == $_SESSION['cls_id']){ ?>
+                            <a href="index.php?state=<?=$_SESSION['school_id']?>-<?=$val['cls_id']?>" class="weui_btn weui_btn_mini weui_btn_warn">当前班级</a>
+                        <?php }else{ ?>
+                            <a href="index.php?state=<?=$_SESSION['school_id']?>-<?=$val['cls_id']?>" class="weui_btn weui_btn_mini weui_btn_warn">进入</a>
+                        <?php } ?>
+                    </div>
                 </div>
-                <div class="weui_cell_ft">
-                <?php if($val['cls']['id'] == $_SESSION['cls_id']){ ?>
-                    <a href="pt_main.php?cls_id=<?=$val['cls']['id']?>" class="weui_btn weui_btn_mini weui_btn_warn">当前班级</a>
-                <?php }else{ ?>
-                    <a href="pt_main.php?cls_id=<?=$val['cls']['id']?>" class="weui_btn weui_btn_mini weui_btn_warn">进入</a>
-                <?php } ?>
-                    <a href="javascript:;" onclick="exit('<?=$val['cls']['id']?>')" class="weui_btn weui_btn_mini weui_btn_warn">退出</a>
-                </div>
-            </div>
             <?php } ?>
         </div>
 

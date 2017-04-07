@@ -3,16 +3,9 @@ require_once '../config.php';
 require_once '../lib/fun.php';
 check_login();
 
-$sql = "select * from sc_user_cls where user_id=".$_SESSION['user']->id;
+$sql = "select *,sc.name as school_name,c.name as cls_name from sc_user_cls as uc left join sc_school as sc on uc.school_id=sc.id left join sc_cls as c on uc.cls_id=c.id  where uc.school_id=".$_SESSION['school_id']." and  uc.user_id=".$_SESSION['user']->id;
 $res = $db->query($sql);
 $my_cls = $res->fetchAll();
-
-foreach($my_cls  as $key=>$val){
-    $sql = "select * from sc_cls where id=".$val['cls_id']." limit 1";
-    $res = $db->query($sql);
-    $my_cls[$key]['cls'] = $res->fetch();
-}
-//var_dump($my_cls);
 ?>
 <!doctype html>
 <html>
@@ -56,15 +49,14 @@ foreach($my_cls  as $key=>$val){
             <?php foreach($my_cls as $key=>$val ) { ?>
             <div class="weui_cell">
                 <div class="weui_cell_bd weui_cell_primary">
-                    <p><?=$val['cls']['name']?></p>
+                    <p><?=$val['school_name']?>-<?=$val['cls_name']?></p>
                 </div>
                 <div class="weui_cell_ft">
-                <?php if($val['cls']['id'] == $_SESSION['cls_id']){ ?>
-                    <a href="teacher_main.php?cls_id=<?=$val['cls']['id']?>" class="weui_btn weui_btn_mini weui_btn_warn">当前班级</a>
+                <?php if($val['cls_id'] == $_SESSION['cls_id']){ ?>
+                    <a href="index.php?state=<?=$_SESSION['school_id']?>-<?=$val['cls_id']?>" class="weui_btn weui_btn_mini weui_btn_warn">当前班级</a>
                 <?php }else{ ?>
-                    <a href="teacher_main.php?cls_id=<?=$val['cls']['id']?>" class="weui_btn weui_btn_mini weui_btn_warn">进入</a>
+                    <a href="index.php?state=<?=$_SESSION['school_id']?>-<?=$val['cls_id']?>" class="weui_btn weui_btn_mini weui_btn_warn">进入</a>
                 <?php } ?>
-                    <a href="javascript:;" onclick="exit('<?=$val['cls']['id']?>')" class="weui_btn weui_btn_mini weui_btn_warn">退出</a>
                 </div>
             </div>
             <?php } ?>

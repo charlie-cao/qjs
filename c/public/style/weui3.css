@@ -36,3 +36,6 @@
 .actionMenu{
     right: 25px;
 }
+.weui_navbar {
+    z-index: 9;
+}

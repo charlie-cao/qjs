@@ -2,7 +2,7 @@
 require_once '../config.php';
 require_once '../lib/fun.php';
 check_login();
-$sql = "select * from sc_cls where id=".$_SESSION['cls_id'];
+$sql = "select * from sc_cls where id=" . $_SESSION['cls_id'];
 $res = $db->query($sql);
 $cls = $res->fetch();
 ?>
@@ -18,17 +18,16 @@ $cls = $res->fetch();
     <script src="../public/zepto.min.js"></script>
     <script src="../public/iscroll.js"></script>
     <script>
-        function code(){
-            return Math.floor(Math.random()*9000)+1000;
+        function code() {
+            return Math.floor(Math.random() * 9000) + 1000;
         }
         $(function () {
 
             $("#cls_key").val(code());
 
-            $("#btn_new").click(function (){
+            $("#btn_new").click(function () {
                 $("#cls_key").val(code());
             });
-
 
 
             var $form = $("#form");
@@ -45,11 +44,11 @@ $cls = $res->fetch();
                             data: $form.serialize(),
                             success: function (data) {
                                 $.hideLoading();
-                                if(data.msg=="success"){
-                                    $.alert("创建班级成功,请邀请用户加入", "系统消息",function (){
-                                        location.href = "teacher_send_inv.php?id="+data.id;
+                                if (data.msg == "success") {
+                                    $.alert("创建班级成功,请邀请用户加入", "系统消息", function () {
+                                        location.href = "pt_send_inv.php?id=" + data.id;
                                     });
-                                }else{
+                                } else {
                                     alert(data.msg);
                                 }
                             },
@@ -72,33 +71,34 @@ $cls = $res->fetch();
     <div class="weui_tab_bd">
 
         <div class="weui-header bg-green">
-            <div class="weui-header-left">  <a href="teacher_cls_list.php" class="icon icon-109 f-white">返回</a>  </div>
+            <div class="weui-header-left"><a href="pt_cls_list.php" class="icon icon-109 f-white">返回</a></div>
             <h1 class="weui-header-title">添加班级</h1>
-            <div class="weui-header-right"> </div>
+            <div class="weui-header-right"></div>
         </div>
 
-    <form id="form">
-        <div class="weui_cells_title">班级信息</div>
-        <div class="weui_cells weui_cells_form">
-            <div class="weui_cell">
-                <div class="weui_cell_hd"><label class="weui_label">班级名称</label></div>
-                <div class="weui_cell_bd weui_cell_primary">
-                    <input class="weui_input" name="name" maxlength="12" required="" tips="请输入班级名称" placeholder="比如：小一班" />
-                    <input name="user_id" type="hidden" value="<?= $_SESSION['user']->id ?>"/>
-                    <input name="school_id" type="hidden" value="<?=$_SESSION['school']->id ?>"/>
+        <form id="form">
+            <div class="weui_cells_title">班级信息</div>
+            <div class="weui_cells weui_cells_form">
+                <div class="weui_cell">
+                    <div class="weui_cell_hd"><label class="weui_label">班级名称</label></div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <input class="weui_input" name="name" required="" tips="请输入班级名称" placeholder="比如：小一班"/>
+                        <input name="user_id" type="hidden" value="<?= $_SESSION['user']->id ?>"/>
+                        <input name="school_id" type="hidden" value="<?= $_SESSION['school']->id ?>"/>
+                    </div>
+                </div>
+                <div class="weui_cell weui_vcode">
+                    <div class="weui_cell_hd"><label class="weui_label">邀请码</label></div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <input class="weui_input" id="cls_key" name="cls_key" required="" pattern="[0-9]{4}"
+                               maxlength="4"
+                               placeholder="口令为4位纯数字" emptytips="口令为4位纯数字" notmatchtips="口令为4位纯数字">
+                    </div>
+                    <div class="weui_cell_ft">
+                        <a id="btn_new" href="javascript:;" class="weui-vcode-btn">随机生成</a>
+                    </div>
                 </div>
             </div>
-            <div class="weui_cell weui_vcode">
-                <div class="weui_cell_hd"><label class="weui_label">邀请码</label></div>
-                <div class="weui_cell_bd weui_cell_primary">
-                    <input class="weui_input" id="cls_key" name="cls_key" required="" pattern="[0-9]{4}" maxlength="4"
-                        placeholder="口令为4位纯数字" emptytips="口令为4位纯数字" notmatchtips="口令为4位纯数字">
-                </div>
-                <div class="weui_cell_ft">
-                     <a id="btn_new" href="javascript:;" class="weui-vcode-btn">随机生成</a>
-                </div>
-            </div>
-        </div>
 
         </form>
         <div class="weui_btn_area">

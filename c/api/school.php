@@ -12,39 +12,8 @@ if (!isset($_REQUEST['a'])) {
     $json["end_time"] = "";
     $json["data"] = null;
 
-    switch ($_REQUEST['a']) {
-        case "save_pic":
-            save_pic();
-            break;
-        case "update_user_info":
-            update_user_info();
-            break;
-        case "update_school_info":
-            update_school_info();
-            break;
-        case "get_school_msg_list":
-            get_school_msg_list();
-            break;
-        case "get_new_school_msg_list":
-            get_new_school_msg_list();
-            break;
-        case "send_school_msg":
-            send_school_msg();
-            break;
-        case "del_school_msg":
-            del_school_msg();
-            break;
-        case "up_school_msg":
-            up_school_msg();
-            break;
-        case "add_cls":
-            add_cls();
-            break;
-        case "check_inv_code":
-            check_inv_code();
-            break;
+    call_user_func($_REQUEST['a']);
 
-    }
     $json["end_time"] = getMillisecond();
     echo json_encode($json);
 }
@@ -124,6 +93,39 @@ function join_cls($school_id, $school_id, $user_id, $is_teacher = 0) {
     }
 }
 
+
+function set_assistant() {
+    global $db;
+    global $json;
+
+//    var_dump($_REQUEST);
+
+     $sql = "UPDATE `sc_user_school` SET `is_assistant` = " . $_REQUEST['state'] . " 
+                    WHERE `user_id` = " . $_REQUEST['user_id'] . " and `school_id` = '" . $_REQUEST['school_id'] . "';";
+    if ($db->exec($sql)) {
+        $json['msg'] = "success";
+        $json['id'] = $_REQUEST['id'];
+    } else {
+        $json['msg'] = "success";
+        $json['info'] = $db->errorInfo();
+    }
+}
+
+function set_teacher() {
+    global $db;
+    global $json;
+    $sql = "UPDATE `sc_user_school` SET `is_teacher` = " . $_REQUEST['state'] . " WHERE `user_id` = " . $_REQUEST['user_id'] . " and `school_id` = " . $_REQUEST['school_id'] . ";";
+    if ($db->exec($sql)) {
+        $json['msg'] = "success";
+        $json['id'] = $_REQUEST['id'];
+    } else {
+        $json['msg'] = "success";
+        $json['info'] = $db->errorInfo();
+    }
+}
+
+
+
 function update_user_info() {
     global $db;
     global $json;
@@ -140,7 +142,7 @@ function update_user_info() {
 function update_school_info() {
     global $db;
     global $json;
-    $sql = "UPDATE `sc_cls` SET `name` = '" . $_REQUEST['name'] . "', `school_key` = '" . $_REQUEST['school_key'] . "' WHERE `id` = " . $_REQUEST['id'] . ";";
+     $sql = "UPDATE `sc_school` SET `name` = '" . $_REQUEST['name'] . "', `phone` = '" . $_REQUEST['phone'] . "' WHERE `id` = " . $_REQUEST['id'] . ";";
     if ($db->exec($sql)) {
         $json['msg'] = "success";
         $json['id'] = $_REQUEST['id'];
@@ -170,9 +172,18 @@ function get_school_msg_list() {
     $q_res = $db->query($sql);
     $q_res = $q_res->fetchAll();
 
+
+    $tag_name = array();
+    foreach ($_SESSION['school_tags'] as $key=>$val){
+        $tag_name[$val['id']] = $val['name'];
+    }
+
     $u_id = array();
     $q_id = array();
     foreach ($q_res as $key => $q) {
+
+        $q_res[$key]['tag_name'] = $tag_name[$q['tag']];
+
         $sql_u = "select * from sc_user where id=" . $q['user_id'] . "   ";
         $u_res = $db->query($sql_u);
         $q_res[$key]['user'] = $u_res->fetchAll();
@@ -294,9 +305,11 @@ function send_school_msg() {
         $data['school_id'] = $_REQUEST['school_id'];
         $data['user_id'] = $_REQUEST['user_id'];
         $data['content'] = $_REQUEST['content'];
-        $data['tag'] = $_REQUEST['tag'];
+        $data['tag'] = $_REQUEST['tag']?$_REQUEST['tag']:"NULL";
         $data['up'] = "0";
         $data['c_time'] = time();
+
+//        var_dump($_REQUEST['tag']);
 
         if (isset($_REQUEST['files'])) {
             $imgs = json_encode($_REQUEST['files']);
@@ -318,7 +331,7 @@ function send_school_msg() {
                 . "'" . $data['school_id'] . "', "
                 . "'" . $data['user_id'] . "', "
                 . "'" . $data['content'] . "', "
-                . "'" . $data['tag'] . "', "
+                 . $data['tag'] . ", "
                 . "'" . $data['up'] . "', "
                 . "'" . $data['c_time'] . "', "
                 . "'" . $data['imgs'] . "', "

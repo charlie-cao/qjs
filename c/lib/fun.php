@@ -1,6 +1,7 @@
 <?php
 
-function httpGet($url) {
+function httpGet($url)
+{
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($curl, CURLOPT_TIMEOUT, 500);
@@ -16,7 +17,8 @@ function httpGet($url) {
     return $res;
 }
 
-function wx_userinfo($appid, $secret, $redirect_uri, $state) {
+function wx_userinfo($appid, $secret, $redirect_uri, $state="")
+{
     $redirect_uri = urlencode($redirect_uri);
     $wx_sing_url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid={$appid}&redirect_uri={$redirect_uri}&response_type=code&scope=snsapi_userinfo&state={$state}#wechat_redirect";
     if (!isset($_GET['code'])) {
@@ -38,7 +40,8 @@ function wx_userinfo($appid, $secret, $redirect_uri, $state) {
     return json_decode(httpGet($wx_userinfo_url));
 }
 
-function login_base($appid, $secret, $redirect_uri, $state) {
+function login_base($appid, $secret, $redirect_uri, $state)
+{
     $redirect_uri = urlencode($redirect_uri);
     $wx_sing_url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid={$appid}&redirect_uri={$redirect_uri}&response_type=code&scope=snsapi_base&state={$state}#wechat_redirect";
     if (!isset($_GET['code'])) {
@@ -52,15 +55,27 @@ function login_base($appid, $secret, $redirect_uri, $state) {
     return json_decode(httpGet($wx_access_token_url));
 }
 
-function sk_encode($str) {
+function sk_encode($str)
+{
     return $str;
 }
 
-function sk_decode($str) {
+function sk_decode($str)
+{
     return $str;
 }
 
-function check_user($user) {
+/**
+ * 通用的交验用户
+ * 检查并重置 session['user']
+ */
+function check_user2()
+{
+
+}
+
+function check_user($user)
+{
     // open db
     global $db;
     // select user
@@ -68,48 +83,47 @@ function check_user($user) {
     $res = $db->query($sql);
     $res->setFetchMode(PDO::FETCH_OBJ);
     $rs = $res->fetch();
-//    var_dump($rs);
+
 
     if ($rs == false) {
         //如果用户没有在系统中注册
         //注册
         //INSERT INTO `schoolcms`.`sc_user` (`id`, `schoolkey`, `username`, `openid`, `nickname`, `language`, `city`, `province`, `country`, `headimgurl`, `sex`, `phone`, `state`, `add_time`, `upd_time`) VALUES (NULL, '11', '', '', '', '', '', '', '', '', '0', '', '0', '0', CURRENT_TIMESTAMP);
         $sql = "INSERT INTO `sc_user` ("
-                . "`id`,"
-                . " `schoolkey`, "
-                . "`username`, "
-                . "`openid`, "
-                . "`nickname`, "
-                . "`language`, "
-                . "`city`, "
-                . "`province`, "
-                . "`country`, "
-                . "`headimgurl`, "
-                . "`sex`, "
-                . "`phone`, "
-                . "`state`, "
-                . "`add_time`, "
-                . "`upd_time`) "
-                . "VALUES ("
-                . "NULL, "
-                . "'123456', "
-                . "'" . $user->nickname . "', "
-                . "'" . $user->openid . "', "
-                . "'" . $user->nickname . "', "
-                . "'" . $user->language . "', "
-                . "'" . $user->city . "', "
-                . "'" . $user->province . "', "
-                . "'" . $user->country . "', "
-                . "'" . $user->headimgurl . "', "
-                . "'" . $user->sex . "', "
-                . "'', "
-                . "'0', "
-                . "'" . time() . "', "
-                . "CURRENT_TIMESTAMP);";
+            . "`id`,"
+            . "`username`, "
+            . "`openid`, "
+            . "`nickname`, "
+            . "`language`, "
+            . "`city`, "
+            . "`province`, "
+            . "`country`, "
+            . "`headimgurl`, "
+            . "`sex`, "
+            . "`phone`, "
+            . "`state`, "
+            . "`add_time`, "
+            . "`upd_time`) "
+            . "VALUES ("
+            . "NULL, "
+            . "'" . $user->nickname . "', "
+            . "'" . $user->openid . "', "
+            . "'" . $user->nickname . "', "
+            . "'" . $user->language . "', "
+            . "'" . $user->city . "', "
+            . "'" . $user->province . "', "
+            . "'" . $user->country . "', "
+            . "'" . $user->headimgurl . "', "
+            . "'" . $user->sex . "', "
+            . "'', "
+            . "'0', "
+            . "'" . time() . "', "
+            . "CURRENT_TIMESTAMP);";
+
         if ($db->exec($sql)) {
             $user->state = 0;
         } else {
-            
+
         }
     } else {
         //如果用户已经在系统中注册
@@ -119,16 +133,18 @@ function check_user($user) {
         //更新最近登录时间
         $sql = "UPDATE `sc_user` SET `last_time` = '" . time() . "' WHERE `openid` = '" . $user->openid . "';";
         $db->exec($sql);
-        $sql = "select * from sc_user where openid='" . $user->openid . "' limit 1";
-        $res = $db->query($sql);
-        $user = $res->fetch(PDO::FETCH_OBJ);
         //更新登录次数
     }
+    $sql = "select * from sc_user where openid='" . $user->openid . "' limit 1";
+    $res = $db->query($sql);
+    $user = $res->fetch(PDO::FETCH_OBJ);
+
     // return user or false
     return $user;
 }
 
-function check_school($school_key) {
+function check_school($school_key)
+{
     //在服务端获取当前school key
     // open db
     global $db;
@@ -139,50 +155,76 @@ function check_school($school_key) {
     return $rs;
 }
 
-function v($url) {
+function v($url)
+{
     header("location:{$url}");
 }
 
-function check_login() {
-    if (!isset($_SESSION['user'])) {
+function check_login()
+{
+//    var_dump($_SESSION['user']);
+    if (!isset($_SESSION['user']->openid)) {
         v("index.php");
     }
 }
 
-function get_school_info($id) {
+function get_school_info($id)
+{
     global $db;
     $sql = "select * from sc_school where id='" . $id . "' limit 1";
     $res = $db->query($sql);
     return $res->fetch(PDO::FETCH_OBJ);
 }
 
-function get_cls_info($id) {
+function get_cls_info($id)
+{
     global $db;
     $sql = "select * from sc_cls where id='" . $id . "' limit 1";
     $res = $db->query($sql);
     return $res->fetch(PDO::FETCH_OBJ);
 }
 
-function get_userinfo($id) {
+function get_userinfo($id)
+{
     global $db;
     $sql = "select * from sc_user where openid='" . $id . "' limit 1";
     $res = $db->query($sql);
     return $res->fetch(PDO::FETCH_OBJ);
 }
 
-function get_tags($id, $type) {
+function get_tags($id, $type)
+{
     global $db;
     $sql = "select * from sc_tag where school_id=" . $id . " and type='" . $type . "' order by o;";
     $res = $db->query($sql);
     return $res->fetchAll(PDO::FETCH_OBJ);
 }
 
-function getMillisecond() {
-    list($t1, $t2) = explode(' ', microtime());
-    return (float) sprintf('%.0f', (floatval($t1) + floatval($t2)) * 1000);
+
+function get_school_tags($school_id)
+{
+    global $db;
+    $sql = "select * from sc_school_tag where school_id=" . $school_id . " order by o asc limit 4;";
+    $res = $db->query($sql);
+    return $res->fetchAll();
 }
 
-function formatTime($time) {
+function get_cls_tags($school_id,$cls_id)
+{
+    global $db;
+    $sql = "select * from sc_cls_tag where school_id=" . $school_id . " and cls_id=".$cls_id." order by o asc limit 4;";
+    $res = $db->query($sql);
+    return $res->fetchAll();
+}
+
+function getMillisecond()
+{
+    list($t1, $t2) = explode(' ', microtime());
+    return (float)sprintf('%.0f', (floatval($t1) + floatval($t2)) * 1000);
+}
+
+function formatTime($time)
+{
     $now = time();
     $day = date('Y-m-d', $time);
     $today = date('Y-m-d');
@@ -206,7 +248,7 @@ function formatTime($time) {
                 return floor($secs / 60) . "分钟前";
             else
                 return floor($secs / 3600) . "小时前";
-        }else if ($days < 2) {//昨天
+        } else if ($days < 2) {//昨天
             $hour = date('h', $time);
             return "昨天" . $hour . '点';
         } elseif ($days < 3) {//前天
@@ -216,4 +258,8 @@ function formatTime($time) {
             return date('m月d号', $time);
         }
     }
+}
+
+function formatTimeYmdHis($time){
+    return date('Y-m-d H:i:s', $time);
 }
