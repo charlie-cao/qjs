@@ -4,7 +4,7 @@ require_once '../lib/fun.php';
 require_once "../lib/jssdk.php";
 check_login();
 
-$sql = "select * from sc_school where id=0 ";
+$sql = "select * from sc_school where id= ".$_SESSION['school_id'];
 $res = $db->query($sql);
 $school = $res->fetch();
 //var_dump($school);
@@ -20,17 +20,40 @@ $school = $res->fetch();
     <link rel="stylesheet" href="../public/style/weui2.css"/>
     <link rel="stylesheet" href="../public/style/weui3.css"/>
     <script src="../public/zepto.min.js"></script>
-    <script src="../public/iscroll.js"></script>
     <script>
         $(function () {
-            //            $('.weui_tab').tab();
-//            $(".weui_btn_warn").click(function (e) {
-//                $.confirm("您确定要转让该校园么?转让条件。。。", "确认转让?", function () {
-//                    $.toast("转让成功!");
-//                }, function () {
-//                    //取消操作
-//                });
-//            })
+            var $form = $("#form");
+            $form.form();
+            $("#btn").click(function (e) {
+                $form.validate(function (error) {
+                    if (error) {
+                    } else {
+                        $.showLoading("更新中");
+                        $.ajax({
+                            type: 'POST',
+                            url: '../api/school.php?a=update_school_info',
+                            dataType: 'json',
+                            data: $form.serialize(),
+                            success: function (data) {
+                                $.hideLoading();
+                                if (data.msg == "success") {
+                                    $.alert("更新成功,稍后将重新登录", "系统消息", function () {
+                                        location.href = "index.php?state=<?=$_SESSION['state']?>";
+                                    });
+                                } else {
+                                    alert(data.msg);
+                                }
+
+
+                            },
+                            error: function (xhr, type) {
+                                $.hideLoading();
+                                console.log('Ajax error!');
+                            }
+                        });
+                    }
+                });
+            })
         });
     </script>
     <style>
@@ -48,9 +71,10 @@ $school = $res->fetch();
 
 <body ontouchstart style="background-color: #f8f8f8;">
 
-
     <div class="weui_tab tab-bottom">
+
         <div class="weui_tab_bd">
+            <form id="form">
 
             <div class="weui-header bg-green">
                 <div class="weui-header-left"> <a href="yz_menu.php" class="icon icon-109 f-white">返回</a> </div>
@@ -63,19 +87,23 @@ $school = $res->fetch();
                 <div class="weui_cell">
                     <div class="weui_cell_hd"><label class="weui_label">校园名称</label></div>
                     <div class="weui_cell_bd weui_cell_primary">
-                        <input class="weui_input" value="<?=$school['name']?>" placeholder="校园名称" />
+                        <input class="weui_input" name="name" maxlength="20" value="<?=$school['name']?>" placeholder="校园名称" />
+                        <input class="weui_input" name="id" type="hidden" value="<?= $school['id']?> "/>
+
                     </div>
                 </div>
                 <div class="weui_cell">
                     <div class="weui_cell_hd"><label class="weui_label">联系电话</label></div>
                     <div class="weui_cell_bd weui_cell_primary">
-                        <input class="weui_input" value="<?=$school['phone']?>" placeholder="联系电话" />
+                        <input class="weui_input" name="phone" value="<?= $school['phone'] ?>" type="tel"
+                               required="" pattern="[0-9]{11}" maxlength="11" placeholder="输入你现在的手机号" emptytips="请输入手机号"
+                               notmatchtips="请输入正确的手机号">
                     </div>
                 </div>
 
 
             </div>
-
+        </form>
             <div class="weui_btn_area">
                 <a class="weui_btn weui_btn_primary" href="javascript:" id="btn">更新</a>
             </div>

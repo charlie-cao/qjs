@@ -2,7 +2,6 @@
 require_once '../config.php';
 require_once '../lib/fun.php';
 check_login();
-//var_dump($_SESSION['user']);
 ?>
 <!doctype html>
 <html>
@@ -16,41 +15,40 @@ check_login();
     <script src="../public/zepto.min.js"></script>
     <script src="../public/iscroll.js"></script>
     <script>
-         $(function () {
-             var $form = $("#form");
-             $form.form();
-             $("#btn").click(function (e) {
-                 $form.validate(function (error) {
-                     if (error) {
-                     } else {
-                         $.showLoading("更新中");
-                         $.ajax({
-                             type: 'POST',
-                             url: '../api/school.php?a=update_user_info',
-                             dataType: 'json',
-                             data: $form.serialize(),
-                             success: function (data) {
-                                 $.hideLoading();
-                                 if(data.msg=="success"){
-                                     $.alert("更新成功,稍后将重新登录", "系统消息",function (){
-                                         location.href = "index.php?state=<?=$_SESSION['state']?>";
-                                     });
-                                 }else{
-                                     alert(data.msg);
-                                 }
+        $(function () {
+            var $form = $("#form");
+            $form.form();
+            $("#btn").click(function (e) {
+                $form.validate(function (error) {
+                    if (error) {
+                    } else {
+                        $.showLoading("更新中");
+                        $.ajax({
+                            type: 'POST',
+                            url: '../api/school.php?a=update_user_info',
+                            dataType: 'json',
+                            data: $form.serialize(),
+                            success: function (data) {
+                                $.hideLoading();
+                                if (data.msg == "success") {
+                                    $.alert("更新成功,稍后将重新登录", "系统消息", function () {
+                                        location.href = "index.php?state=<?=$_SESSION['state']?>";
+                                    });
+                                } else {
+                                    alert(data.msg);
+                                }
 
 
-
-                             },
-                             error: function (xhr, type) {
-                                 $.hideLoading();
-                                 console.log('Ajax error!');
-                             }
-                         });
-                     }
-                 });
-             })
-         });
+                            },
+                            error: function (xhr, type) {
+                                $.hideLoading();
+                                console.log('Ajax error!');
+                            }
+                        });
+                    }
+                });
+            })
+        });
     </script>
     <style>
         .weui_cell_hd .icon {
@@ -71,43 +69,25 @@ check_login();
     <div class="weui-header-right"></div>
 </div>
 <div>
-    <div class="weui_cells_title">个人信息</div>
-
-    <form id="form">
-        <div class="weui_cells weui_cells_form">
-            <div class="weui_cell">
-                <div class="weui_cell_hd"><label class="weui_label">备注名称</label></div>
-                <div class="weui_cell_bd weui_cell_primary">
-                    <input class="weui_input" name="username" required="" tips="请输入备注名称" placeholder="比如：梁爽园长"
-                           value="<?= $_SESSION['user']->username ?>"/>
-                    <input class="weui_input" name="id" type="hidden" value="<?= $_SESSION['user']->id ?>"/>
-                </div>
+    <div class="weui_cells_title">个人</div>
+    <div class="weui_cells weui_cells_access">
+        <a class="weui_cell " href="yz_my_info.php">
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>个人信息</p>
             </div>
-            <div class="weui_cell">
-                <div class="weui_cell_hd"><label class="weui_label">电话</label></div>
-                <div class="weui_cell_bd weui_cell_primary">
-                    <input class="weui_input" name="phone" value="<?= $_SESSION['user']->phone ?>" type="tel"
-                           required="" pattern="[0-9]{11}" maxlength="11" placeholder="输入你现在的手机号" emptytips="请输入手机号"
-                           notmatchtips="请输入正确的手机号">
-                </div>
-            </div>
-        </div>
-    </form>
-
-    <div class="weui_btn_area">
-        <a class="weui_btn weui_btn_primary" href="javascript:" id="btn">更新</a>
+            <div class="weui_cell_ft"></div>
+        </a>
     </div>
+
     <div class="weui_cells_title">园区管理</div>
     <div class="weui_cells weui_cells_access">
         <a class="weui_cell" href="./yz_user_list.php">
-            <div class="weui_cell_hd"><span class="icon icon-100"></span></div>
             <div class="weui_cell_bd weui_cell_primary">
                 <p>人员管理</p>
             </div>
             <div class="weui_cell_ft"></div>
         </a>
         <a class="weui_cell" href="./yz_school_info.php">
-            <div class="weui_cell_hd"><span class="icon icon-29"></span></div>
             <div class="weui_cell_bd weui_cell_primary">
                 <p>校园管理</p>
             </div>

@@ -1,17 +1,7 @@
 <?php
 require_once '../config.php';
 require_once '../lib/fun.php';
-require_once "../lib/jssdk.php";
 check_login();
-
-$sql = "select * from sc_user where openid = '" . $_SESSION['user']->openid . "'";
-$res = $db->query($sql);
-$res->setFetchMode(PDO::FETCH_OBJ);
-$rs = $res->fetch();
-if (isset($rs)) {
-    $_SESSION["user"] = $rs;
-}
-
 ?>
 <!doctype html>
 <html>
@@ -24,6 +14,7 @@ if (isset($rs)) {
     <link rel="stylesheet" href="../public/style/weui2.css"/>
     <link rel="stylesheet" href="../public/style/weui3.css"/>
     <script src="../public/zepto.min.js"></script>
+    <script src="../public/iscroll.js"></script>
     <script>
         $(function () {
             var $form = $("#form");
@@ -60,29 +51,40 @@ if (isset($rs)) {
             })
         });
     </script>
-    <style>
-        .weui_cell_hd .icon {
-            font-size: 24px;
-            line-height: 40px;
-            margin: 4px;
-            color: #18b4ed;
-            -webkit-transition: font-size 0.25s ease-out 0s;
-            -moz-transition: font-size 0.25s ease-out 0s;
-            transition: font-size 0.25s ease-out 0s;
-        }
-    </style>
 </head>
 
 <body ontouchstart style="background-color: #f8f8f8;">
 
-<div class="weui_cells_title">个人</div>
-<div class="weui_cells weui_cells_access">
-    <a class="weui_cell " href="zl_my_info.php">
-        <div class="weui_cell_bd weui_cell_primary">
-            <p>个人信息</p>
+
+<div class="weui-header bg-green">
+    <div class="weui-header-left"><a href="yz_menu.php" class="icon icon-109 f-white">返回</a></div>
+    <h1 class="weui-header-title">个人信息</h1>
+    <div class="weui-header-right"></div>
+</div>
+
+
+<form id="form">
+    <div class="weui_cells weui_cells_form">
+        <div class="weui_cell">
+            <div class="weui_cell_hd"><label class="weui_label">备注名称</label></div>
+            <div class="weui_cell_bd weui_cell_primary">
+                <input class="weui_input" name="username" maxlength="12" required="" tips="请输入备注名称" placeholder="比如：梁爽园长"
+                       value="<?= $_SESSION['user']->username ?>"/>
+                <input class="weui_input" name="id" type="hidden" value="<?= $_SESSION['user']->id ?>"/>
+            </div>
         </div>
-        <div class="weui_cell_ft"></div>
-    </a>
+        <div class="weui_cell">
+            <div class="weui_cell_hd"><label class="weui_label">电话</label></div>
+            <div class="weui_cell_bd weui_cell_primary">
+                <input class="weui_input" name="phone" value="<?= $_SESSION['user']->phone ?>" type="tel"
+                       required="" pattern="[0-9]{11}" maxlength="11" placeholder="输入你现在的手机号" emptytips="请输入手机号"
+                       notmatchtips="请输入正确的手机号">
+            </div>
+        </div>
+    </div>
+</form>
+<div class="weui_btn_area">
+    <a class="weui_btn weui_btn_primary" href="javascript:" id="btn">更新</a>
 </div>
 
 </body>

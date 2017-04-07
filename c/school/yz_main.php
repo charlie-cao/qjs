@@ -9,8 +9,8 @@ check_login();
 $jssdk = new JSSDK($appid, $secret);
 $signPackage = $jssdk->GetSignPackage();
 
-if(!isset($_GET['tag'])){
-    $_GET['tag']=0;
+if (!isset($_GET['tag'])) {
+    $_GET['tag'] = "";
 }
 
 
@@ -21,7 +21,7 @@ if(!isset($_GET['tag'])){
 <html>
 <head>
     <meta charset="utf-8">
-    <title></title>
+    <title><?=$_SESSION['school']->name?></title>
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
     <link rel="stylesheet" href="../public/style/weui.css"/>
     <link rel="stylesheet" href="../public/style/weui2.css"/>
@@ -64,21 +64,31 @@ if(!isset($_GET['tag'])){
         }
 
         function del(id, em) {
-            d = {};
-            d.id = id;
-            $.ajax({
-                type: 'POST',
-                data: d,
-                url: '../api/school.php?a=del_school_msg',
-                dataType: 'json',
-                success: function (data) {
-                    $(em).parent().parent().fadeOut();
-                    $.toast("删除成功");
-                },
-                error: function (xhr, type, e) {
+            $.actions({
+                actions: [
+                    {
+                        text: "删除信息",
+                        className: "bg-orange f-white",
+                        onClick: function () {
+                            d = {};
+                            d.id = id;
+                            $.ajax({
+                                type: 'POST',
+                                data: d,
+                                url: '../api/school.php?a=del_school_msg',
+                                dataType: 'json',
+                                success: function (data) {
+                                    $(em).parent().parent().fadeOut();
+                                    $.toast("删除成功");
+                                },
+                                error: function (xhr, type, e) {
 
-                    alert(type);
-                }
+                                    alert(type);
+                                }
+                            });
+                        }
+                    }
+                ]
             });
         }
 
@@ -111,6 +121,8 @@ if(!isset($_GET['tag'])){
         }
 
         function toggleMenu(e){
+            $('.actionMenu').removeClass('active');
+
             $('#actionMenu'+$(e).data('id')).toggleClass('active');
         }
 
@@ -169,18 +181,10 @@ if(!isset($_GET['tag'])){
         function addCell(data, i) {
 
             var tag = "";
-            if (data[i].tag == 0) {
+            if (data[i].tag_name === null) {
                 tag = "动态"
-            } else if (data[i].tag == 1) {
-                tag = "通知"
-            } else if (data[i].tag == 2) {
-                tag = "校园"
-            } else if (data[i].tag == 3) {
-                tag = "餐谱"
-            } else if (data[i].tag == 4) {
-                tag = "校车"
-            } else if (data[i].tag == 5) {
-                tag = "报名"
+            } else  {
+                tag = data[i].tag_name;
             }
 
             var div_img = "";
@@ -410,18 +414,13 @@ if(!isset($_GET['tag'])){
 <div class="page-hd" style="padding: 0px">
     <div class="weui_tab" id="tab5" style="height:44px;">
         <div class="weui_navbar">
-            <a href="yz_main.php?tag=0" class="weui_navbar_item <?php echo ($_GET['tag']==0)?" tab-green":"" ?>">
-            动态 </a>
-            <a href="yz_main.php?tag=1" class="weui_navbar_item <?php echo ($_GET['tag']==1)?" tab-green":"" ?>">
-            通知 </a>
-            <a href="yz_main.php?tag=2" class="weui_navbar_item <?php echo ($_GET['tag']==2)?" tab-green":"" ?>">
-            校园 </a>
-            <a href="yz_main.php?tag=3" class="weui_navbar_item <?php echo ($_GET['tag']==3)?" tab-green":"" ?>">
-            餐谱 </a>
-            <a href="yz_main.php?tag=4" class="weui_navbar_item <?php echo ($_GET['tag']==4)?" tab-green":"" ?>">
-            校车 </a>
-            <a href="yz_main.php?tag=5" class="weui_navbar_item <?php echo ($_GET['tag']==5)?" tab-green":"" ?>">
-            报名 </a>
+            <a href="yz_main.php" class="weui_navbar_item <?php echo ($_GET['tag'] == "") ? " tab-green" : "" ?>">
+                全部 </a>
+            <?php foreach ($_SESSION['school_tags'] as $key => $val) { ?>
+                <a href="yz_main.php?tag=<?= $val['id'] ?>"
+                   class="weui_navbar_item <?php echo ($_GET['tag'] == $val['id']) ? " tab-green" : "" ?>">
+                    <?= $val['name'] ?> </a>
+            <?php } ?>
         </div>
     </div>
 </div>
