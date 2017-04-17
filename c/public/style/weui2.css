@@ -3,7 +3,7 @@ body,html {
 	height:100%;
 	-webkit-tap-highlight-color:transparent
 }a {
-  color: #18b4ed;
+  color: #666666;
   text-decoration: none;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
@@ -343,18 +343,18 @@ input.bg-blue-b {
   border-width: 0;
 } 
 .bg-orange {/*橙色*/
-  background-color: #FF6600;
+  background-color: #FF6E6C;
 }
 .bg-orange:not(.weui_btn_disabled):visited {
-  color: #FFFFFF;
+  color: #FF6E6C;
 }
 .bg-orange:not(.weui_btn_disabled):active {
   color: rgba(255, 255, 255, 0.4);
-  background-color: #FF6600;
+  background-color: #FF6E6C;
 } 
 .bg-orange-b {
-  color: #FF6600;
-  border: 1px solid #FF6600;
+  color: #FF6E6C;
+  border: 1px solid #FF6E6C;
 }
 button.bg-orange-b,
 input.bg-orange-b {
@@ -362,7 +362,7 @@ input.bg-orange-b {
   background-color: transparent;
 }
 .bg-orange-b:active {
-  border-color: #FF6600;
+  border-color: #FF6E6C;
 }
 .bg-orange-b:after {
   border-width: 0;
@@ -518,8 +518,8 @@ input.bg-orange-b {
 }
 .weui_navbar_item.tab-green {
     background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
-    border-bottom: 3px solid #04be02;
-    color: #04be02;
+    border-bottom: 3px solid #3ED4B9;
+    color: #3ED4B9;
 }
 .weui_navbar_item.tab-red {
     background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
@@ -760,8 +760,8 @@ border-radius:0!important;
   display: inline-block;
   position: relative;
   padding:1px;
-  color: #ff7f0d;
-  border: 1px solid #ff7f0d;
+  color: #3ED4B9;
+  border: 1px solid #3ED4B9;
   border-radius: 2px; }
   @media screen and (-webkit-min-device-pixel-ratio: 2) {
     .weui-label-s {
@@ -774,7 +774,7 @@ border-radius:0!important;
         position: absolute;
         top: 0;
         left: 0;
-        border: 1px solid #ff7f0d;
+        border: 1px solid #3ED4B9;
         -webkit-transform: scale(0.5);
         -webkit-transform-origin: 0 0;
         padding: 1px;
@@ -1829,6 +1829,7 @@ weui-box*/
   position: relative;
   padding: 3px 0;
   -webkit-box-sizing: border-box;
+  background: linear-gradient(to right, #61E043 , #00C5BC) !important;
  
 }
 .weui-header .weui-header-title,.weui-header h1 {
@@ -2314,7 +2315,7 @@ body {
 .moments__post .weui_cell_bd .paragraphExtender,
 .moments__post .weui_cell_bd .fa,
 .moments__post .weui_cell_bd .nickname {
-  color: #5d6b85;
+  color: #557776;
 }
 .moments__post .weui_cell_bd .title,
 .moments__post .weui_cell_bd .paragraph,
@@ -2436,7 +2437,7 @@ body {
 .moments__post .weui_cell_bd .actionToggle {
   width: 15px;
   height: 15px;
-  background: #92abd4;
+  background: #3ED4B9;
   margin-left: auto;
   border-radius: 1px;
   position: absolute;
@@ -2470,7 +2471,7 @@ body {
   width: 0;
   position: absolute;
   pointer-events: none;
-  border-right-color: #92abd4;
+  border-right-color: #3ED4B9;
   border-width: 3px;
 }
 /*

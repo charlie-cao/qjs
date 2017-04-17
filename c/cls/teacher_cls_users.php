@@ -1,7 +1,11 @@
 <?php
 require_once '../config.php';
 require_once '../lib/fun.php';
+require_once "../lib/jssdk.php";
 check_login();
+//
+$jssdk = new JSSDK($appid, $secret);
+$signPackage = $jssdk->GetSignPackage();
 
 $sql = "select * from sc_user_cls as c left join sc_user as u on c.user_id=u.id where cls_id=" . $_SESSION['cls']->id;
 $res = $db->query($sql);
@@ -10,12 +14,9 @@ $cls_users = $res->fetchAll();
 //在学校表中判定是否为校园老师
 
 foreach ($cls_users as $key => $user) {
-     $sql = "select * from sc_user_school where school_id=" . $_SESSION['school_id'] . " and user_id=" . $user['id'];
+    $sql = "select * from sc_user_school where school_id=" . $_SESSION['school_id'] . " and user_id=" . $user['id'];
     $res = $db->query($sql);
     $school_user_info = $res->fetch();
-
-//    var_dump($school_user_info);
-
     $cls_users[$key]['school_teacher'] = $school_user_info['is_teacher'];
 }
 
@@ -28,11 +29,11 @@ foreach ($cls_users as $key => $user) {
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
     <link rel="stylesheet" href="../public/style/weui.css"/>
     <link rel="stylesheet" href="../public/style/weui2.css"/>
-    <link rel="stylesheet" href="../public/style/weui3.css"/>
+    <link rel="stylesheet" href="../public/style/weui3.css?1"/>
     <script src="../public/zepto.min.js"></script>
     <script>
         $(function () {
-            $(".weui_btn_warn").click(function (i, item) {
+            $(".change").click(function (i, item) {
                 var user_id = $(this).data('id');
                 $.confirm("您确定要转让班级吗?", "确认转让?", function () {
                     $.ajax({
@@ -64,6 +65,40 @@ foreach ($cls_users as $key => $user) {
 
                 // 班主任转让的时候更新当前用户为当前班主任，原班主任为普通用户
             });
+            $(".delete").click(function (i, item) {
+                var user_id = $(this).data('id');
+                $.confirm("您确定要删除该用户么?", "确认删除?", function () {
+                    $.ajax({
+                        type: 'POST',
+                        url: '../api/cls.php?a=del_user',
+                        dataType: 'json',
+                        data: {'user_id': user_id, 'cls_id': '<?=$_SESSION['cls']->id?>'},
+                        success: function (data) {
+                            $.hideLoading();
+                            if (data.msg == "success") {
+                                $.alert("删除用户成功", "系统消息", function () {
+                                    location.reload();
+                                });
+                            } else {
+                                alert(data.msg);
+                            }
+                        },
+                        error: function (xhr, type) {
+                            $.hideLoading();
+                            console.log('Ajax error!');
+                        }
+                    });
+
+
+                }, function () {
+                    //取消操作
+                });
+
+
+                // 班主任转让的时候更新当前用户为当前班主任，原班主任为普通用户
+            });
+
+
 //            $('.weui_tab').tab();
         });
     </script>
@@ -87,17 +122,27 @@ foreach ($cls_users as $key => $user) {
                 <img src="<?= $val['headimgurl'] ?>" style="width:20px;margin-right:5px;display:block">
             </div>
             <div class="weui_cell_bd weui_cell_primary">
-                <p><?= $val['username'] ?> </p>
+                <p><?= $val['username'] ?>
+                    <?php if ($val['is_teacher'] == 1) { ?>
+                        <span>班主任</span>
+                    <?php } else if ($val['school_teacher'] == true) { ?>
+                        <span>本校老师</span>
+                    <?php } else { ?>
+                        <span>家长</span>
+                    <?php } ?>
+                </p>
             </div>
             <div class="weui_cell_ft">
                 <?php if ($val['is_teacher'] == 1) { ?>
-                    本班班主任
+
                 <?php } else if ($val['school_teacher'] == true) { ?>
-                    <div class="weui_cell_ft">
-                        <a href="javascript:;" class="weui_btn weui_btn_mini weui_btn_warn" data-id="<?= $val['id'] ?>">转让</a>
-                    </div>
+                    <a href="javascript:;" class="weui_btn weui_btn_mini weui_btn_warn change"
+                       data-id="<?= $val['id'] ?>">转让</a>
+                    <a href="javascript:;" class="weui_btn weui_btn_mini weui_btn_warn delete"
+                       data-id="<?= $val['id'] ?>">删除</a>
                 <?php } else { ?>
-                    家长
+                    <a href="javascript:;" class="weui_btn weui_btn_mini weui_btn_warn delete"
+                       data-id="<?= $val['id'] ?>">删除</a>
                 <?php } ?>
             </div>
         </div>

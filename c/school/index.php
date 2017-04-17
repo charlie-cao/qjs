@@ -49,7 +49,8 @@ if(!isset($tags)){
 //exit;
 
 //如果用户是第一次登录 将用户加入学校
-$sql = "insert into sc_user_school set school_id=".$_SESSION['school_id'].",user_id=".$_SESSION['user']->id.",c_time=".time();
+//$sql = "insert into sc_user_school set school_id=".$_SESSION['school_id'].",user_id=".$_SESSION['user']->id.",c_time=".time();
+$sql = "insert into sc_user_school set is_assistant=1,school_id=".$_SESSION['school_id'].",user_id=".$_SESSION['user']->id.",c_time=".time();
 $db->exec($sql);
 //exit;
 //引导用户进入系统

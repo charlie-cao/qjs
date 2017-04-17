@@ -37,5 +37,6 @@ $voice_path = "../upload/voice/";
 //照片存储路径
 $image_path = "../upload/image/";
 
-
+//问题价格 单位分
+$price_money = 1;
 ?>

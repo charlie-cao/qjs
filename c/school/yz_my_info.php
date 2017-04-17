@@ -1,7 +1,11 @@
 <?php
 require_once '../config.php';
 require_once '../lib/fun.php';
+require_once "../lib/jssdk.php";
 check_login();
+
+$jssdk = new JSSDK($appid, $secret);
+$signPackage = $jssdk->GetSignPackage();
 ?>
 <!doctype html>
 <html>
@@ -12,10 +16,65 @@ check_login();
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
     <link rel="stylesheet" href="../public/style/weui.css"/>
     <link rel="stylesheet" href="../public/style/weui2.css"/>
-    <link rel="stylesheet" href="../public/style/weui3.css"/>
+    <link rel="stylesheet" href="../public/style/weui3.css?1"/>
     <script src="../public/zepto.min.js"></script>
     <script src="../public/iscroll.js"></script>
+    <script src="../public/jweixin-1.2.0.js"></script>
     <script>
+
+
+        wx.config({
+            debug: false,
+            appId: '<?= $signPackage["appId"]; ?>',
+            timestamp: <?= $signPackage["timestamp"];?>,
+            nonceStr: '<?= $signPackage["nonceStr"]; ?>',
+            signature: '<?= $signPackage["signature"]; ?>',
+            jsApiList: [
+                'checkJsApi',
+                'chooseImage',
+                'previewImage',
+                'uploadImage',
+                'onMenuShareAppMessage',
+                'onMenuShareTimeline',
+                'hideAllNonBaseMenuItem',
+                'showMenuItems'
+            ]
+        });
+
+        wx.ready(function () {
+            wx.hideAllNonBaseMenuItem();
+            // 更新本分享链接
+
+            wx.onMenuShareAppMessage({
+                title: '<?=$_SESSION['user']->username?>邀请您加入<?=$_SESSION['school']->name?>', // 分享标题
+                desc: '<?=$_SESSION['school']->name?> 欢迎您', // 分享描述
+                link: '<?= $server_host ?>/c/school/index.php?state=<?=$_SESSION['school']->id?>', // 分享链接
+                imgUrl: '<?= $server_host ?>/c/public/images/wx_inv.jpg', // 分享图标
+                type: '', // 分享类型,music、video或link，不填默认为link
+                dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+                success: function () {
+                    // 用户确认分享后执行的回调函数
+                },
+                cancel: function () {
+                    // 用户取消分享后执行的回调函数
+                }
+            });
+
+            wx.onMenuShareTimeline({
+                title: '<?=$_SESSION['user']->username?>邀请您加入<?=$_SESSION['school']->name?>', // 分享标题
+                link: '<?= $server_host ?>/c/school/index.php?state=<?=$_SESSION['school']->id?>', // 分享链接
+                imgUrl: '<?= $server_host ?>/c/public/images/wx_inv.jpg', // 分享图标
+                success: function () {
+                    // 用户确认分享后执行的回调函数
+                },
+                cancel: function () {
+                    // 用户取消分享后执行的回调函数
+                }
+            });
+
+        });
+
+
         $(function () {
             var $form = $("#form");
             $form.form();
@@ -68,7 +127,8 @@ check_login();
         <div class="weui_cell">
             <div class="weui_cell_hd"><label class="weui_label">备注名称</label></div>
             <div class="weui_cell_bd weui_cell_primary">
-                <input class="weui_input" name="username" maxlength="12" required="" tips="请输入备注名称" placeholder="比如：梁爽园长"
+                <input class="weui_input" name="username" maxlength="12" required="" tips="请输入备注名称"
+                       placeholder="比如：梁爽园长"
                        value="<?= $_SESSION['user']->username ?>"/>
                 <input class="weui_input" name="id" type="hidden" value="<?= $_SESSION['user']->id ?>"/>
             </div>

@@ -3,10 +3,9 @@ require_once '../config.php';
 require_once '../lib/fun.php';
 //check_login();
 
-$sql = "select * from sc_cls where school_id=" . $_SESSION['school_id'];
+$sql = "select * from sc_cls where school_id=" . $_SESSION['school_id']." order by c_time desc";
 $res = $db->query($sql);
 $cls = $res->fetchAll();
-
 ?>
 <!doctype html>
 <html>
@@ -16,7 +15,7 @@ $cls = $res->fetchAll();
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
     <link rel="stylesheet" href="../public/style/weui.css"/>
     <link rel="stylesheet" href="../public/style/weui2.css"/>
-    <link rel="stylesheet" href="../public/style/weui3.css"/>
+    <link rel="stylesheet" href="../public/style/weui3.css?1"/>
     <script src="../public/zepto.min.js"></script>
 </head>
 

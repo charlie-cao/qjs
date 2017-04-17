@@ -1,7 +1,12 @@
 <?php
 require_once '../config.php';
 require_once '../lib/fun.php';
+require_once "../lib/jssdk.php";
 check_login();
+//
+$jssdk = new JSSDK($appid, $secret);
+$signPackage = $jssdk->GetSignPackage();
+
 $sql = "select * from sc_cls where id=".$_SESSION['cls_id'];
 $res = $db->query($sql);
 $cls = $res->fetch();
@@ -15,7 +20,7 @@ $cls = $res->fetch();
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
     <link rel="stylesheet" href="../public/style/weui.css" />
     <link rel="stylesheet" href="../public/style/weui2.css" />
-    <link rel="stylesheet" href="../public/style/weui3.css" />
+    <link rel="stylesheet" href="../public/style/weui3.css?1" />
     <script src="../public/zepto.min.js"></script>
     <script src="../public/iscroll.js"></script>
     <script>

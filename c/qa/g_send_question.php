@@ -19,6 +19,33 @@ $sql = "select * from sc_user where id = " . $_REQUEST['id'] . " limit 1";
 $res = $db->query($sql);
 $user = $res->fetch();
 
+//var_dump($_SESSION['user']);
+$sql = "select * from sc_user where id = " . $_REQUEST['id'] . " limit 1";
+$res = $db->query($sql);
+$user = $res->fetch();
+
+
+$sql = "SELECT count(*) as c FROM `sc_question` WHERE `answer_user_id` = " . $_REQUEST['id'];
+$res = $db->query($sql);
+$re = $res->fetch();
+$money_count = $re['c'];
+
+$sql = "SELECT count(*) as c FROM `sc_question` WHERE answer_content is not null and `answer_user_id` = " . $_REQUEST['id'];
+$res = $db->query($sql);
+$re = $res->fetch();
+$answer_count = $re['c'];
+
+
+$sql = "SELECT sum(play_num) as c FROM `sc_question` WHERE answer_content is not null and `answer_user_id` = " . $_REQUEST['id'];
+$res = $db->query($sql);
+$re = $res->fetch();
+$play_count = $re['c'] ? $re['c'] : 0;
+//    var_dump($play_count);
+
+$sql = "SELECT sum(up_num) as c FROM `sc_question` WHERE answer_content is not null and `answer_user_id` = " . $_REQUEST['id'];
+$res = $db->query($sql);
+$re = $res->fetch();
+$up_num_count = $re['c'] ? $re['c'] : 0;
 
 require_once "../lib/WxPay.Api.php";
 require_once "WxPay.JsApiPay.php";
@@ -70,7 +97,7 @@ $jsApiParameters = $tools->GetJsApiParameters($order);
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
     <link rel="stylesheet" href="../public/style/weui.css"/>
     <link rel="stylesheet" href="../public/style/weui2.css"/>
-    <link rel="stylesheet" href="../public/style/weui3.css"/>
+    <link rel="stylesheet" href="../public/style/weui3.css?1"/>
     <script src="../public/zepto.min.js"></script>
     <script>
 
@@ -171,14 +198,24 @@ $jsApiParameters = $tools->GetJsApiParameters($order);
 </head>
 
 <body ontouchstart style="background-color: #f8f8f8;">
+
+
 <div style="text-align: center; padding: 10px;">
-    <img class="" src="<?= $user['headimgurl'] ?>" style="width: 80px; padding: 20px; border-radius: 80px;">
-    <div class="weui-loadmore weui-loadmore-line">
-        <span class="weui-loadmore-tips"><?= $user['username'] ?></span>
+    <img class="" src="<?= $user['headimgurl'] ?>" style="width: 80px; padding: 10px; border-radius: 80px;">
+    <div><span style="font-size: 14px;"><?= $user['username'] ?></span><span class="weui-label-s"
+                                                                             style="font-size: 8px; margin-left: 8px;"><?= $user['small_memo'] ? $user['small_memo'] : "特约专家" ?></span>
     </div>
-    <p class="weui_media_desc" style="padding: 20px;"><?= $user['memo'] ? $user['memo'] : "还没有填写备注" ?></p>
+    <p class="weui_media_desc" style="padding-top: 4px;font-size:12px;overflow: hidden;
+    text-overflow: ellipsis;display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;"><?= $user['memo'] ? $user['memo'] : "还没有填写备注" ?></p>
 </div>
-<div class="weui_cells ">
+<div style="color: #aaa;
+    text-align: center;
+    font-size: 10px;">收入<?= $money_count ?>元 <?= $answer_count ?>个回答 <?= $play_count ?>人偷听 <?= $up_num_count ?>人觉得赞
+</div>
+
+<div class="weui_cells " style="margin-top: 2px !important; ">
     <form id="sendMsg">
         <input type="hidden" name="question_user_id" value="<?= $_SESSION['user']->id ?>">
         <input type="hidden" name="answer_user_id" value="<?= $user['id'] ?>">
@@ -191,7 +228,7 @@ $jsApiParameters = $tools->GetJsApiParameters($order);
     </form>
 </div>
 <div class="weui_btn_area">
-    <a class="weui_btn weui_btn_primary" href="javascript:;" id="formSubmitBtn">付费提问 10元</a>
+    <a class="weui_btn weui_btn_primary" href="javascript:;" id="formSubmitBtn">付费提问 8.8元</a>
 </div>
 </body>
 </html>

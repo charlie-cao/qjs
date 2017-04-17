@@ -23,12 +23,13 @@ if (!isset($_GET['tag'])) {
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
     <link rel="stylesheet" href="../public/style/weui.css"/>
     <link rel="stylesheet" href="../public/style/weui2.css"/>
-    <link rel="stylesheet" href="../public/style/weui3.css"/>
+    <link rel="stylesheet" href="../public/style/weui3.css?1?1"/>
     <script src="../public/zepto.min.js"></script>
     <script src="../public/jweixin-1.2.0.js"></script>
     <script src="../public/updown.js"></script>
     <script src="../public/lazyimg.js"></script>
     <script>
+
 
         wx.config({
             debug: false,
@@ -40,22 +41,63 @@ if (!isset($_GET['tag'])) {
                 'checkJsApi',
                 'chooseImage',
                 'previewImage',
-                'uploadImage'
+                'uploadImage',
+                'onMenuShareAppMessage',
+                'onMenuShareTimeline',
+                'hideAllNonBaseMenuItem',
+                'showMenuItems'
             ]
         });
 
         wx.ready(function () {
+            wx.ready(function () {
+                wx.hideAllNonBaseMenuItem();
+                // 更新本分享链接
+                wx.showMenuItems({
+                    menuList: ["menuItem:share:appMessage","menuItem:share:timeline"]
+                    // 要隐藏的菜单项，只能隐藏“传播类”和“保护类”按钮，所有menu项见附录3
+                });
+
+                wx.onMenuShareAppMessage({
+                    title: '<?=$_SESSION['user']->username?>邀请您加入<?=$_SESSION['school']->name?>', // 分享标题
+                    desc: '<?=$_SESSION['school']->name?> 欢迎您', // 分享描述
+                    link: '<?= $server_host ?>/c/school/index.php?state=<?=$_SESSION['school']->id?>', // 分享链接
+                    imgUrl: '<?= $server_host ?>/c/public/images/wx_inv.jpg', // 分享图标
+                    type: '', // 分享类型,music、video或link，不填默认为link
+                    dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+                    success: function () {
+                        // 用户确认分享后执行的回调函数
+                    },
+                    cancel: function () {
+                        // 用户取消分享后执行的回调函数
+                    }
+                });
+
+                wx.onMenuShareTimeline({
+                    title: '<?=$_SESSION['user']->username?>邀请您加入<?=$_SESSION['school']->name?>', // 分享标题
+                    link: '<?= $server_host ?>/c/school/index.php?state=<?=$_SESSION['school']->id?>', // 分享链接
+                    imgUrl: '<?= $server_host ?>/c/public/images/wx_inv.jpg', // 分享图标
+                    success: function () {
+                        // 用户确认分享后执行的回调函数
+                    },
+                    cancel: function () {
+                        // 用户取消分享后执行的回调函数
+                    }
+                });
+
+            });
 
         });
 
 
+
         function preview(em) {
             var imgs = [];
-            $(em).parent().find("img").each(function (key, item) {
-                imgs[imgs.length] = $(item).attr("src");
+            $(em).parent().find("div").each(function (key, item) {
+                imgs[imgs.length] = $(item).data("imgurl");
             });
             wx.previewImage({
-                current: $(em).find("img").attr("src"), // 当前显示图片的http链接
+                current: $(em).data("imgurl"), // 当前显示图片的http链接
                 urls: imgs // 需要预览的图片http链接列表
             });
         }
@@ -108,7 +150,7 @@ if (!isset($_GET['tag'])) {
                 dataType: 'json',
                 success: function (data) {
                     reset_up(id, data.data);
-                    $('#actionMenu' + id).toggleClass('active');
+                    $('#actionMenu' + id).removeClass('active');
                 },
                 error: function (xhr, type, e) {
 
@@ -145,8 +187,8 @@ if (!isset($_GET['tag'])) {
 
                 } else {
                     if (users.length > 0) {
-                        up_user_html = '<p class="liketext" style="margin-top: 6px; padding-top:2px; padding-bottom:2px;border-bottom: 1px solid #e4e4e4;" >'
-                        up_user_html += '<i class="icon icon-96" style="padding-right: 6px;padding-left: 6px;color: #5d6b85; font-size:14px"></i>'
+                        up_user_html = '<p class="liketext" style="margin-top: 6px; padding-top:2px; padding-bottom:2px;" >'
+                        up_user_html += '<img src="../public/images/icon/love.png" style="width: 14px; padding: 2px; margin-right: 4px; margin-left: 4px;">'
                         for (i in users) {
                             if (i == users.length - 1) {
                                 up_user_html += '<span class="nickname" style="font-size: 14px;">' + users[i].nickname + '</span> ';
@@ -187,8 +229,7 @@ if (!isset($_GET['tag'])) {
             if (typeof(data[i].imgs) != undefined) {
                 $.each(data[i].imgs, function (i, img) {
                     div_img += ''
-                        + '<div class="thumbnail weui-updown" onclick="preview(this)" >'
-                        + '<img src="<?=$server_host . "/c/cls/"?>' + img + '" style="height:100%;"/>'
+                        + '<div class="thumbnail weui-updown" onclick="preview(this)" data-imgurl="<?=$server_host . "/c/cls/"?>' + img + '" >'
                         + '</div>';
                 })
             }
@@ -201,7 +242,7 @@ if (!isset($_GET['tag'])) {
             var del_link = "";
 //            if(data[i].user[0].id == <?=$_SESSION['user']->id?>){
             del_link += '<a class="title" href="javascript:;" onclick="del(' + data[i].id + ',this);" style="float: right;">';
-            del_link += '<span class="icon icon-26"></span>';
+            del_link += '<img src="../public/images/icon/del.png" style="width: 18px; height: 18px;">';
             del_link += '</a>';
 //            }
 
@@ -237,7 +278,7 @@ if (!isset($_GET['tag'])) {
                 + '<!-- 资料条 -->'
                 + '<div class="toolbar">'
                 + '<p class="timestamp">' + data[i].c_time + '</p>'
-                + '<span id="actionToggle" data-id="' + data[i].id + '" onclick="toggleMenu(this)" class="actionToggle" style="height: 12px;"><i class="icon icon-83" ></i></span>'
+                + '<span id="actionToggle" data-id="' + data[i].id + '" class="actionToggle" style="height: 12px;"><i class="icon icon-83" ></i></span>'
                 + '<div>'
 
                 + '<div id="actionMenu' + data[i].id + '" class="actionMenu slideIn">'
@@ -281,7 +322,7 @@ if (!isset($_GET['tag'])) {
                     domClass: 'dropload-down',
                     domRefresh: '<div class="dropload-refresh f15 "><i class="icon icon-20"></i>上拉加载更多</div>',
                     domLoad: '<div class="dropload-load f15"><span class="weui-loading"></span>正在加载中...</div>',
-                    domNoData: '<div class="dropload-noData">没有内容啦 >__< </div>'
+                    domNoData: '<div class="dropload-noData">-- 没有更多了 --</div>'
                 },
                 domUp: {//下拉
                     domClass: 'dropload-up',
@@ -319,24 +360,54 @@ if (!isset($_GET['tag'])) {
                                 // 如果没有数据
                                 setTimeout(function () {
                                     $('.weui_panel_bd').append(result);
+                                    //点击任意位置取消显示
+                                    $('.actionToggle').off();
+                                    $('.actionToggle').on("click",function (e) {
+                                        e.preventDefault();
+                                        $('.actionMenu').removeClass('active');
+                                        $('#actionMenu' + $(this).data('id')).toggleClass('active');
+                                        return false;
+                                    })
+                                    $(".weui_cell").off();
+                                    $(".weui_cell").on("click",function (e) {
+                                        console.log($(e));
+                                        $('.actionMenu').removeClass('active');
+                                    })
 
 
-                                    var lazyloadImg = new LazyloadImg({
-                                        el: '.weui-updown [data-img]', //匹配元素
-                                        top: 50, //元素在顶部伸出长度触发加载机制
-                                        right: 50, //元素在右边伸出长度触发加载机制
-                                        bottom: 50, //元素在底部伸出长度触发加载机制
-                                        left: 50, //元素在左边伸出长度触发加载机制
-                                        qriginal: false, // true，自动将图片剪切成默认图片的宽高；false显示图片真实宽高
-                                        load: function (el) {
-                                            el.style.cssText += '-webkit-animation: fadeIn 01s ease 0.2s 1 both;animation: fadeIn 1s ease 0.2s 1 both;';
-                                        },
-                                        error: function (el) {
+//                                    var lazyloadImg = new LazyloadImg({
+//                                        el: '.weui-updown [data-img]', //匹配元素
+//                                        top: 50, //元素在顶部伸出长度触发加载机制
+//                                        right: 50, //元素在右边伸出长度触发加载机制
+//                                        bottom: 50, //元素在底部伸出长度触发加载机制
+//                                        left: 50, //元素在左边伸出长度触发加载机制
+//                                        qriginal: false, // true，自动将图片剪切成默认图片的宽高；false显示图片真实宽高
+//                                        load: function (el) {
+//                                            el.style.cssText += '-webkit-animation: fadeIn 01s ease 0.2s 1 both;animation: fadeIn 1s ease 0.2s 1 both;';
+//                                        },
+//                                        error: function (el) {
+//
+//                                        }
+//                                    });
 
+                                    $(".thumbnails").each(function (e,m) {
+                                        var imgs = $(m).find(".thumbnail");
+                                        if(imgs.length==1){
+                                            //设置大图
+                                            $(imgs[0]).css("width","80%");
+                                            $(imgs[0]).css("height","140px");
+                                            $(imgs[0]).css("background-position","50%");
+                                            $(imgs[0]).css("background-size","cover");
+                                            $(imgs[0]).css("background-image","url("+$(imgs[0]).data('imgurl')+")");
+                                        }else{
+                                            imgs.each(function (e1,m1) {
+                                                $(m1).css("background-position","50%");
+                                                $(m1).css("background-size","cover");
+                                                $(m1).css("background-image","url("+$(m1).data('imgurl')+")");
+                                                $(m1).css("height", $(m1).css("width"));
+                                            })
                                         }
-                                    });
-
-                                    $(".thumbnail").css("height", $(".thumbnail").css("width"));
+                                    })
 
                                     // 每次数据加载完，必须重置
                                     me.resetload();
@@ -402,11 +473,15 @@ if (!isset($_GET['tag'])) {
 <body ontouchstart>
 <div class="weui-header bg-green header">
     <div class="weui-header-left">
-        <a href="zl_menu.php" class="icon icon-101 f-white" style="font-size: 26px;"></a>
+        <a href="zl_menu.php" class="title_icon" >
+            <img src="../public/images/icon/setup.png" >
+        </a>
     </div>
     <h1 class="weui-header-title">大家庭</h1>
     <div class="weui-header-right">
-        <a href="zl_send_msg.php" class="icon icon-77 f-white" style="font-size: 26px;"></a>
+        <a href="zl_send_msg.php" class="title_icon">
+            <img src="../public/images/icon/msg.png" >
+        </a>
     </div>
 </div>
 

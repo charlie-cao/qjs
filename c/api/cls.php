@@ -18,6 +18,32 @@ if (!isset($_REQUEST['a'])) {
     echo json_encode($json);
 }
 
+/**
+ * 班主任删除用户
+ */
+function del_user(){
+    global $db;
+    global $json;
+    $sql = "delete from sc_user_cls where cls_id=".$_REQUEST['cls_id']." and user_id=".$_REQUEST['user_id'].";";
+
+    if ($db->exec($sql)) {
+        $json['msg'] = "success";
+    }else{
+
+    }
+}
+
+function exit_cls(){
+    global $db;
+    global $json;
+    $sql = "delete from sc_user_cls where cls_id=".$_REQUEST['cls_id']." and user_id=".$_REQUEST['user_id'].";";
+
+    if ($db->exec($sql)) {
+        $json['msg'] = "success";
+    }else{
+
+    }
+}
 
 function del_comment() {
     global $db;
@@ -121,7 +147,7 @@ function add_cls() {
         //班主任默认加入班级
         join_cls($_REQUEST['school_id'], $json['id'], $_REQUEST['user_id'], 1);
 
-        $tag_name = array("通知","成长秀");
+        $tag_name = array("宝宝秀","通知","活动","心得","作业");
         foreach ($tag_name as $tag){
             init_cls_tag($_REQUEST['school_id'],$json['id'],$tag);
         }

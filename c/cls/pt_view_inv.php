@@ -9,6 +9,7 @@ require_once "../lib/jssdk.php";
 $jssdk = new JSSDK($appid, $secret);
 $signPackage = $jssdk->GetSignPackage();
 
+
 $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
 
 //交验唯一ID
@@ -112,39 +113,7 @@ $cls = $res->fetch();
             wx.ready(function () {
                 wx.hideAllNonBaseMenuItem();
             });
-
-            $("#enter").click(function () {
-                var code = $("#code").val();
-                d = {
-                    'school_id': '<?= $_SESSION['school_id'] ?>',
-                    'cls_id': '<?= $_SESSION['cls_id'] ?>',
-                    'user_id': '<?= $_SESSION['user']->id ?>',
-                    'code': code
-                };
-                $.ajax({
-                    type: 'POST',
-                    url: '../api/cls.php?a=check_inv_code',
-                    dataType: 'json',
-                    data: d,
-                    success: function (data) {
-                        if (data.msg == "success") {
-                            $.alert("邀请码正确，确定后进入该班级", function () {
-                                location.href = "index.php?state=<?=$_SESSION['school_id']?>-<?= $cls['id'] ?>";
-                            });
-                        } else {
-                            $.alert("邀请码错误，请重新输入");
-                            $("#code").val("");
-                        }
-                    },
-                    error: function (xhr, type) {
-                        console.log('Ajax error!');
-                    }
-                });
-                return false;
-            });
         });
-
-
     </script>
     <style>
         body {
@@ -166,36 +135,34 @@ $cls = $res->fetch();
 
     </style>
 </head>
-<body ontouchstart>
-
-
-<div style="    text-align: center;">
-    <img src="../public/images/0.jpeg" style="    width: 100px;padding: 50px;border-radius: 150px;"/>
-<!--    <h4 class="weui_msg_title">欢迎加入 --><?//= $cls['name'] ?><!-- <br/>班级邀请码可以向班主任询问</h4>-->
-    <h4 class="weui_msg_title">欢迎加入 <?= $cls['name'] ?> <br/>班级邀请码可以向班主任询问</h4>
-
-</div>
-<div class="weui_cells weui_cells_form">
-    <div class="weui_cell">
-        <div class="weui_cell_hd"><label class="weui_label">邀请码</label></div>
-        <div class="weui_cell_bd weui_cell_primary">
-            <input id="code" class="weui_input" type="tel" required="" pattern="[0-9]{4}" maxlength="4" placeholder="请输入班级邀请码" emptytips="请输入班级邀请码" notmatchtips="班级邀请码为4位纯数字">
-        </div>
-        <div class="weui_cell_ft">
-            <i class="weui_icon_warn"></i>
-        </div>
+<body ontouchstart style="background-color: #fff;">
+<div class="weui_msg " id="msg1" style="padding-top:10px;">
+    <div class="weui_icon_area" style="margin-bottom: 10px;">
+        <img src="../public/images/wx_inv.jpg" style="width: 60px;"/>
     </div>
-</div>
-<div class="weui_btn_area">
-    <a id="enter" href="javascript:" class="weui_btn weui_btn_primary">进入班级</a>
-</div>
-<div class="weui_cells_tips"></div>
-
-<div class="weui-footer weui-footer-fixed-bottom">
-    <p class="weui-footer-links">
-        <a href="javascript:;" class="weui-footer-link">千家师</a>
-    </p>
-    <p class="weui-footer__text">Copyright © 2008-2017 </p>
+    <div class="weui_text_area" style="">
+        <h2 class="weui_msg_title" style="font-size: 14px;"><?= $_SESSION['school']->name ?> : <?= $cls['name'] ?></h2>
+        <p class="weui_msg_desc" style="font-size: 12px; text-align: left">班级邀请码为<?= $cls['cls_key'] ?>
+            ，快来加入我们的班级圈！比微信群更好用，消息分类显示、永久保存，不再担心错过，还可以像朋友圈一样点赞，评论。</p>
+        <br>
+        <div class="weui_msg_desc" style="font-size: 12px; text-align: left">步骤：
+            <ol style="margin-left: 40px;">
+                <li>关注学校服务号 <b><?= $_SESSION['school']->name ?></b></li>
+                <li>打开"班级"菜单,找到 <b><?= $cls['name'] ?></b></li>
+                <li>点击"加入"按钮，输入邀请码 <b><?= $cls['cls_key'] ?></b></li>
+            </ol>
+        </div>
+        <br>
+        <p class="weui_msg_desc" style="font-size: 12px; text-align: left">
+            加入成功后，您以后打开"班级"菜单，就会自动打开我们的班级圈。
+        </p>
+    </div>
+    <div class="weui-footer weui-footer-fixed-bottom">
+        <p class="weui-footer-links">
+            <a href="javascript:;" class="weui-footer-link">千家师</a>
+        </p>
+        <p class="weui-footer__text">Copyright © 2008-2017 </p>
+    </div>
 </div>
 </body>
 </html>

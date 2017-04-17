@@ -35,12 +35,15 @@ $_SESSION['user'] = check_user($_SESSION['user']);
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
     <link rel="stylesheet" href="../public/style/weui.css"/>
     <link rel="stylesheet" href="../public/style/weui2.css"/>
-    <link rel="stylesheet" href="../public/style/weui3.css"/>
+    <link rel="stylesheet" href="../public/style/weui3.css?1"/>
     <script src="../public/zepto.min.js"></script>
     <script src="../public/updown.js"></script>
     <script src="../public/lazyimg.js"></script>
     <script>
         function addCell(data, i) {
+            if(data[i].small_memo=="" || data[i].small_memo===null){
+                data[i].small_memo = "特约专家";
+            }
             if (data[i].memo == "" || data[i].memo === null) {
                 data[i].memo = "还没有填写备注";
             }
@@ -61,6 +64,8 @@ $_SESSION['user'] = check_user($_SESSION['user']);
             }else if(data[i].is_assistant=="1"){
                 title = '<label class="weui-label-s">助理</label>';
             }
+            title = '<span class="weui-label-s">' + data[i].small_memo + '</span>';
+
 
             //更新用户星级
             var result = ''

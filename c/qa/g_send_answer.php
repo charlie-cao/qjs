@@ -42,7 +42,7 @@ $user = $res->fetch();
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
     <link rel="stylesheet" href="../public/style/weui.css"/>
     <link rel="stylesheet" href="../public/style/weui2.css"/>
-    <link rel="stylesheet" href="../public/style/weui3.css"/>
+    <link rel="stylesheet" href="../public/style/weui3.css?1"/>
     <script src="../public/zepto.min.js"></script>
     <script src="../public/jweixin-1.2.0.js"></script>
     <script>
@@ -96,8 +96,6 @@ $user = $res->fetch();
                 $.hideLoading();
             }, 300)
 
-
-
             var START = 0;
             var END = 0;
             var voice = {
@@ -106,44 +104,12 @@ $user = $res->fetch();
             };
             var recordTimer;
 
-
-
-
-
-            //松手结束录音
-            $('#talk_btn').on('touchend', function (event) {
+            $("#sendVoice").on("touchstart", function (event) {
                 event.preventDefault();
-                END = new Date().getTime();
-
-                if ((END - START) < 300) {
-                    END = 0;
-                    START = 0;
-                    //小于300ms，不录音
-                    clearTimeout(recordTimer);
-                } else {
-                    wx.stopRecord({
-                        success: function (res) {
-                            voice.localId = res.localId;
-                            alert(voice.localId);
-//                                uploadVoice();
-                        },
-                        fail: function (res) {
-                            alert(JSON.stringify(res));
-                        }
-                    });
-                }
             });
 
-            $("#play_btn").on('click', function (event) {
+            $("#sendVoice").on("touchend", function (event) {
                 event.preventDefault();
-                alert(voice.localId);
-                wx.playVoice({
-                    filePath: voice.localId
-                })
-            })
-
-
-            $("#sendVoice").on("click", function () {
                 if(voice.localId==""){
                     alert("请先录音");
                     return true;
@@ -153,7 +119,6 @@ $user = $res->fetch();
                     isShowProgressTips: 1, // 默认为1，显示进度提示
                     success: function (res) {
 
-//                        alert('上传语音成功，serverId 为' + res.serverId);
 
                         voice.serverId = res.serverId;
                         voice.user_id = <?=$_SESSION['user']->id?>;
@@ -167,11 +132,9 @@ $user = $res->fetch();
                             data: voice,
                             dataType: "json",
                             success: function (data) {
-
-                                console.log(data.msg);
-                                alert('录音已经保存到服务器');
-                                location.href = "g_my_answer.php";
-//                                window.history.back(-1);
+                                $.alert('您的回答已经发送',function () {
+                                    location.href = "g_my_answer.php";
+                                });
                             },
                             error: function (xhr, errorType, error) {
                                 alert(error);
@@ -179,8 +142,8 @@ $user = $res->fetch();
                         });
                     }
                 });
-            });
 
+            });
 
             $('#startRecord').on("touchstart", function (event) {
                 event.preventDefault();
@@ -224,18 +187,12 @@ $user = $res->fetch();
                 }
             });
 
-
-
-            // 4.4 监听录音自动停止
-            wx.onVoiceRecordEnd({
-                complete: function (res) {
-                    voice.localId = res.localId;
-                    alert('录音时间已超过一分钟');
-                }
+            $('#playVoice').on("touchstart", function (event) {
+                event.preventDefault();
             });
 
-            // 4.5 播放音频
-            $('#playVoice').click(function () {
+            $('#playVoice').on("touchend", function (event) {
+                event.preventDefault();
                 if (voice.localId == '') {
                     alert('请先使用 startRecord 接口录制一段声音');
                     return;
@@ -246,21 +203,13 @@ $user = $res->fetch();
             });
 
 
-            // 4.6 暂停播放音频
-            $('#pauseVoice').click(function () {
-                wx.pauseVoice({
-                    localId: voice.localId
-                });
+            // 4.4 监听录音自动停止
+            wx.onVoiceRecordEnd({
+                complete: function (res) {
+                    voice.localId = res.localId;
+                    alert('录音时间已超过一分钟');
+                }
             });
-
-
-            // 4.7 停止播放音频
-            $('#stopVoice').click(function () {
-                wx.stopVoice({
-                    localId: voice.localId
-                });
-            });
-
 
             // 4.8 监听录音播放停止
             wx.onVoicePlayEnd({
@@ -269,36 +218,7 @@ $user = $res->fetch();
                 }
             });
 
-            // 4.8 上传语音
-            $('#uploadVoice').click(function () {
-                if (voice.localId == '') {
-                    alert('请先使用 startRecord 接口录制一段声音');
-                    return;
-                }
-                wx.uploadVoice({
-                    localId: voice.localId,
-                    success: function (res) {
-                        alert('上传语音成功，serverId 为' + res.serverId);
-                        voice.serverId = res.serverId;
-                    }
-                });
-            });
 
-
-            // 4.9 下载语音
-            $('#downloadVoice').click(function () {
-                if (voice.serverId == '') {
-                    alert('请先使用 uploadVoice 上传声音');
-                    return;
-                }
-                wx.downloadVoice({
-                    serverId: voice.serverId,
-                    success: function (res) {
-                        alert('下载语音成功，localId 为' + res.localId);
-                        voice.localId = res.localId;
-                    }
-                });
-            });
         })
 
 
@@ -323,6 +243,7 @@ $user = $res->fetch();
 
 <body ontouchstart style="background-color: #f8f8f8;">
 <?php
+
 if($question['answer_content']!=""){
 ?>
 <div class="weui_msg hide" id="msg1" style="display: block; opacity: 1;">
@@ -341,6 +262,7 @@ if($question['answer_content']!=""){
 </div>
 <?php
     exit;
+
 }
 ?>
 
@@ -352,25 +274,25 @@ if($question['answer_content']!=""){
     <div class="weui-loadmore weui-loadmore-line">
         <span class="weui-loadmore-tips"><?= $user['username'] ?></span>
     </div>
-    <p class="weui_media_desc" style="padding: 20px; height:120px;">
+    <p class="weui_media_desc" style="padding: 20px; ">
         请问：<?= $question['question_content'] ?>
     </p>
 </div>
 
 <div style="text-align:center; height:50px;">
     <a id="playVoice" class="paragraphExtender" style="color: white; display:none">
-        <span class="icon icon-53" style="padding-right:4px"></span> <span id="voice_state"></span>
+        <span class="icon icon-53" style="padding-right:4px;"></span> <span id="voice_state" style=""></span>
     </a>
 </div>
 
 <div style="text-align:center; height:50px;">
-    <a id="startRecord" class="paragraphExtender" style="color: white;user-select:none;">
-        <span class="icon icon-44" style="padding-right:4px;user-select:none;"></span> <span id="voice_state2" style="user-select:none;">按住 说话</span>
+    <a id="startRecord" class="paragraphExtender" style="color: white;">
+        <span class="icon icon-44" style="padding-right:4px;"></span> <span id="voice_state2" style="">按住 说话</span>
     </a>
 </div>
 <div style="text-align:center; height:50px;">
-    <a id="sendVoice" class="paragraphExtender" style="color: white;user-select:none; background-color:#FF6600">
-        <span class="icon icon-71" style="padding-right:4px;user-select:none;"></span> <span style="user-select:none;">发送 回答</span>
+    <a id="sendVoice" class="paragraphExtender" style="color: white; background-color:#FF6600">
+        <span class="icon icon-71" style="padding-right:4px;"></span> <span style="">发送 回答</span>
     </a>
 </div>
 

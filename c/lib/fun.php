@@ -204,7 +204,7 @@ function get_tags($id, $type)
 function get_school_tags($school_id)
 {
     global $db;
-    $sql = "select * from sc_school_tag where school_id=" . $school_id . " order by o asc limit 4;";
+    $sql = "select * from sc_school_tag where school_id=" . $school_id . " order by o asc limit 5;";
     $res = $db->query($sql);
     return $res->fetchAll();
 }
@@ -212,7 +212,7 @@ function get_school_tags($school_id)
 function get_cls_tags($school_id,$cls_id)
 {
     global $db;
-    $sql = "select * from sc_cls_tag where school_id=" . $school_id . " and cls_id=".$cls_id." order by o asc limit 4;";
+    $sql = "select * from sc_cls_tag where school_id=" . $school_id . " and cls_id=".$cls_id." order by o asc limit 5;";
     $res = $db->query($sql);
     return $res->fetchAll();
 }
@@ -249,13 +249,13 @@ function formatTime($time)
             else
                 return floor($secs / 3600) . "小时前";
         } else if ($days < 2) {//昨天
-            $hour = date('h', $time);
+            $hour = date('G', $time);
             return "昨天" . $hour . '点';
         } elseif ($days < 3) {//前天
-            $hour = date('h', $time);
+            $hour = date('G', $time);
             return "前天" . $hour . '点';
         } else {//三天前
-            return date('m月d号', $time);
+            return date('n月j号', $time);
         }
     }
 }

@@ -33,7 +33,7 @@ function update_user_info()
 {
     global $db;
     global $json;
-    $sql = "UPDATE `sc_user` SET `username` = '" . $_REQUEST['username'] . "', `memo` = '" . $_REQUEST['memo'] . "' WHERE `id` = " . $_REQUEST['id'] . ";";
+    $sql = "UPDATE `sc_user` SET `username` = '" . $_REQUEST['username'] . "', `memo` = '" . $_REQUEST['memo'] . "', `small_memo` = '" . $_REQUEST['small_memo'] . "' WHERE `id` = " . $_REQUEST['id'] . ";";
     if ($db->exec($sql)) {
         $json['msg'] = "success";
         //重置user
@@ -52,8 +52,10 @@ function update_user_info()
 function add_play_num()
 {
     global $db;
+    global $json;
     $sql = "update sc_question set play_num = (play_num+1) WHERE  id=" . $_REQUEST['question_id'];
     $db->exec($sql);
+    $json['msg'] = "success";
 }
 
 /**
@@ -98,7 +100,7 @@ function save_voice()
 
 
         if ($db->exec($sql)) {
-            $sql = "UPDATE `sc_question` SET `answer_content` = '" . $mediaId . "' WHERE `id` = " . $question_id . ";";
+            $sql = "UPDATE `sc_question` SET `answer_content` = '" . $mediaId . "',`answer_time` = '" . time() . "' WHERE `id` = " . $question_id . ";";
             if ($db->exec($sql)) {
 
                 $sql = "select * from sc_question where id=" . $question_id;
@@ -270,16 +272,16 @@ function get_expert_list()
     $res = $q->fetchAll();
 
     foreach ($res as $key => $val) {
-        $star_num = 0;
+        $star_num = 3;
         $num = $val['up_num'] + $val['ans_num'] / 5;
         if ($num > 0 && $num < 10) {
-            $star_num = 1;
-        } elseif ($num >= 10 && $num < 40) {
-            $star_num = 2;
-        } elseif ($num >= 40 && $num < 80) {
             $star_num = 3;
-        } elseif ($num >= 80 && $num < 160) {
+        } elseif ($num >= 10 && $num < 40) {
             $star_num = 4;
+        } elseif ($num >= 40 && $num < 80) {
+            $star_num = 5;
+        } elseif ($num >= 80 && $num < 160) {
+            $star_num = 5;
         } elseif ($num >= 160) {
             $star_num = 5;
         }
@@ -334,14 +336,14 @@ function school_get_expert_list()
     foreach ($res as $key => $val) {
         $star_num = 0;
         $num = $val['up_num'] + $val['ans_num'] / 5;
-        if ($num > 0 && $num < 10) {
-            $star_num = 1;
-        } elseif ($num >= 10 && $num < 40) {
-            $star_num = 2;
-        } elseif ($num >= 40 && $num < 80) {
+        if ($num >= 0 && $num < 10) {
             $star_num = 3;
-        } elseif ($num >= 80 && $num < 160) {
+        } elseif ($num >= 10 && $num < 40) {
             $star_num = 4;
+        } elseif ($num >= 40 && $num < 80) {
+            $star_num = 5;
+        } elseif ($num >= 80 && $num < 160) {
+            $star_num = 5;
         } elseif ($num >= 160) {
             $star_num = 5;
         }
@@ -586,7 +588,7 @@ function get_qa_list()
     //2 为校内
     if ($_REQUEST['tag'] == 0) {
         $sql = "select * from sc_question where answer_content is not null and   is_del=0 and school_id is NULL   "
-            . "order by c_time desc "
+            . "order by answer_time desc "
             . "limit " . $start_num . "," . $size . ";";
     } elseif ($_REQUEST['tag'] == 1){
         $sql = "select * from sc_question where answer_content is not null and  is_del=0 and school_id is NULL   "
@@ -594,7 +596,7 @@ function get_qa_list()
             . "limit " . $start_num . "," . $size . ";";
     }elseif ($_REQUEST['tag'] == 2){
         $sql = "select * from sc_question where answer_content is not null and  is_del=0 and school_id = ".$_REQUEST['school_id']." "
-            . "order by c_time desc "
+            . "order by answer_time desc "
             . "limit " . $start_num . "," . $size . ";";
 
     }
@@ -620,7 +622,11 @@ function get_qa_list()
         $res = $db->query($sql);
         $q_res[$key]['up_user'] = $res->fetchAll();
 
-        $q_res[$key]['c_time'] = formatTime($q_res[$key]['c_time']);
+        $q_res[$key]['c_time'] = formatTime($q_res[$key]['answer_time']);
+
+        if($q_res[$key]['answer_user'][0]['small_memo']==""||$q_res[$key]['answer_user'][0]['small_memo'] == null){
+            $q_res[$key]['answer_user'][0]['small_memo']="特约专家";
+        }
     }
 
 

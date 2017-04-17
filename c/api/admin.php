@@ -50,7 +50,7 @@ function add_school()
         $sql = "insert into sc_user_school set school_id=" . $json['id'] . ",user_id=" . $_REQUEST['user_id'] . ",is_leader=1,c_time=" . time();
         $db->exec($sql);
 
-        $tag_name = array("校园","通知","校车","餐谱","报名");
+        $tag_name = array("宝宝秀","通知","活动","校训","报名");
         foreach ($tag_name as $tag){
             init_school_tag($json['id'],$tag);
         }
@@ -60,6 +60,40 @@ function add_school()
     }
 }
 
+/**
+ * 更新学校信息 更新校长
+ */
+function update_school(){
+    global $db;
+    global $json;
+    //更新校园名称
+    $sql = "update  sc_school set name = '".$_REQUEST['school_name']."' where id=".$_REQUEST['school_id'];
+    $db->exec($sql);
+
+    //设置之前校长为0
+    //如果用户已经在学校中 修改 校长为1 否则，添加用户到学校并设置为校长
+    if($_REQUEST['user_id']!=$_REQUEST['old_leader_id']){
+
+        //取消老校长的授权
+        $sql = "update sc_user_school set is_leader=0 where school_id =".$_REQUEST['school_id']." and  user_id=".$_REQUEST['old_leader_id'];
+        $db->exec($sql);
+
+
+
+        $sql = "select * from sc_user_school where school_id =".$_REQUEST['school_id']." and  user_id=".$_REQUEST['user_id'];
+        $q = $db->query($sql);
+        $r = $q->fetch();
+        if($r){
+            //如果新校长用户已经在学校中
+            $sql = "update sc_user_school set is_leader=1 where  school_id =".$_REQUEST['school_id']." and  user_id=".$_REQUEST['user_id'];
+            $db->exec($sql);
+        }else{
+            $sql = "insert into sc_user_school set school_id=" . $_REQUEST['school_id'] . ",user_id=" . $_REQUEST['user_id'] . ",is_leader=1,c_time=" . time();
+            $db->exec($sql);
+        }
+    }
+    $json['msg'] = "success";
+}
 function init_school_tag($school_id,$tag_name){
     global $db;
     global $json;

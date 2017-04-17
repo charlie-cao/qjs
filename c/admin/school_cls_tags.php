@@ -19,7 +19,7 @@ $cls = $q->fetch();
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
     <link rel="stylesheet" href="../public/style/weui.css"/>
     <link rel="stylesheet" href="../public/style/weui2.css"/>
-    <link rel="stylesheet" href="../public/style/weui3.css"/>
+    <link rel="stylesheet" href="../public/style/weui3.css?1"/>
     <script src="../public/zepto.min.js"></script>
     <script>
         $(function () {
@@ -144,7 +144,7 @@ $cls = $q->fetch();
     </div>
 
     <?php foreach ($rs as $key => $r) { ?>
-        <div class="weui_cell" style="background-color: <?= ($key >= 4) ? "#ccc" : "" ?>">
+        <div class="weui_cell" style="background-color: <?= ($key >= 5) ? "#ccc" : "" ?>">
             <div class="weui_cell_hd">
                 <?= $key + 1 ?>
             </div>

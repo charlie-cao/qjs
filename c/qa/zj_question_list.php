@@ -27,7 +27,7 @@ $_SESSION['user'] = check_user($_SESSION['user']);
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
     <link rel="stylesheet" href="../public/style/weui.css"/>
     <link rel="stylesheet" href="../public/style/weui2.css"/>
-    <link rel="stylesheet" href="../public/style/weui3.css"/>
+    <link rel="stylesheet" href="../public/style/weui3.css?1"/>
     <script src="../public/zepto.min.js"></script>
     <script src="../public/jweixin-1.2.0.js"></script>
     <script>
@@ -103,7 +103,7 @@ $_SESSION['user'] = check_user($_SESSION['user']);
                 },
                 fail: function (res) {
                     //调用服务端上传远程数据到微信服务器并修改voice_id后重新调用playVoice
-                    alert("重新上传");
+//                    alert("重新上传");
                     var d = {'serverId': voice_id, 'question_id': q_id};
 
 //                    alert("question_id:" + q_id);
@@ -206,7 +206,7 @@ foreach ($questions as $key => $q) {
 
             <div class="weui_cell_ft">
                 <?php if ($q['answer_content'] == "") { ?>
-                    <a href="g_send_answer.php?id=<?= $q['id'] ?>&user_id=<?= $q['question_user_id'] ?>"
+                    <a href="zj_send_answer.php?id=<?= $q['id'] ?>&user_id=<?= $q['question_user_id'] ?>"
                        class="weui_btn weui_btn_mini weui_btn_primary">回答</a>
                 <?php } else { ?>
                     <a id="paragraphExtender" class="paragraphExtender" style="color: white;"

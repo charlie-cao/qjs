@@ -20,7 +20,7 @@ if (!isset($_GET['tag'])) {
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
     <link rel="stylesheet" href="../public/style/weui.css"/>
     <link rel="stylesheet" href="../public/style/weui2.css"/>
-    <link rel="stylesheet" href="../public/style/weui3.css"/>
+    <link rel="stylesheet" href="../public/style/weui3.css?1"/>
     <script src="../public/zepto.min.js"></script>
     <script src="../public/updown.js"></script>
     <script src="../public/lazyimg.js"></script>
@@ -115,7 +115,7 @@ if (!isset($_GET['tag'])) {
                 },
                 fail: function (res) {
                     //调用服务端上传远程数据到微信服务器并修改voice_id后重新调用playVoice
-                    alert("重新上传");
+//                    alert("重新上传");
                     var d = {'serverId': voice_id, 'question_id': q_id};
 
 //                    alert("question_id:" + q_id);
@@ -166,7 +166,7 @@ if (!isset($_GET['tag'])) {
                 dataType: 'json',
                 success: function (data) {
                     reset_up(id, data.data);
-                    $('#actionMenu' + id).toggleClass('active');
+                    $('#actionMenu' + id).removeClass('active');
                 },
                 error: function (xhr, type, e) {
 
@@ -204,8 +204,8 @@ if (!isset($_GET['tag'])) {
 
                 } else {
                     if (users.length > 0) {
-                        up_user_html = '<p class="liketext" style="margin-top: 6px; padding-top:2px; padding-bottom:2px;border-bottom: 1px solid #e4e4e4;" >'
-                        up_user_html += '<i class="icon icon-96" style="padding-right: 6px;padding-left: 6px;color: #5d6b85; font-size:14px"></i>'
+                        up_user_html = '<p class="liketext" style="margin-top: 6px; padding-top:2px; padding-bottom:2px;" >'
+                        up_user_html += '<img src="../public/images/icon/love.png" style="width: 14px; padding: 2px; margin-right: 4px; margin-left: 4px;">'
                         for (i in users) {
                             if (i == users.length - 1) {
                                 up_user_html += '<span class="nickname" style="font-size: 14px;">' + users[i].nickname + '</span> ';
@@ -258,6 +258,7 @@ if (!isset($_GET['tag'])) {
                 + '<!- - 人名链接 -->'
                 + '<a class="title" href="javascript:;">'
                 + '<span>' + data[i].answer_user[0].username + '</span>'
+                + '<span class="weui-label-s" >' + data[i].answer_user[0].small_memo + '</span>'
                 + '</a>'
 
 
@@ -275,7 +276,7 @@ if (!isset($_GET['tag'])) {
                 + '<!-- 资料条 -->'
                 + '<div class="toolbar">'
                 + '<p class="timestamp">' + data[i].c_time + '</p>'
-                + '<span id="actionToggle" data-id="' + data[i].id + '" onclick="toggleMenu(this)" class="actionToggle" style="height: 12px;"><i class="icon icon-83" ></i></span>'
+                + '<span id="actionToggle" data-id="' + data[i].id + '"  class="actionToggle" style="height: 12px;"><i class="icon icon-83" ></i></span>'
                 + '<div>'
 
                 + '<div id="actionMenu' + data[i].id + '" class="actionMenu slideIn">'
@@ -349,6 +350,21 @@ if (!isset($_GET['tag'])) {
                                 // 如果没有数据
                                 setTimeout(function () {
                                     $('.weui_panel_bd').append(result);
+
+                                    //点击任意位置取消显示
+                                    $('.actionToggle').off();
+                                    $('.actionToggle').on("click",function (e) {
+                                        e.preventDefault();
+                                        $('.actionMenu').removeClass('active');
+                                        $('#actionMenu' + $(this).data('id')).toggleClass('active');
+                                        return false;
+                                    })
+                                    $(".weui_cell").off();
+                                    $(".weui_cell").on("click",function (e) {
+                                        console.log($(e));
+                                        $('.actionMenu').removeClass('active');
+                                    })
+
                                     me.resetload();
                                 }, 300);
                             } else {

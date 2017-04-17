@@ -30,7 +30,7 @@ $_SESSION['user'] = check_user($_SESSION['user']);
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
     <link rel="stylesheet" href="../public/style/weui.css"/>
     <link rel="stylesheet" href="../public/style/weui2.css"/>
-    <link rel="stylesheet" href="../public/style/weui3.css"/>
+    <link rel="stylesheet" href="../public/style/weui3.css?1"/>
     <script src="../public/zepto.min.js"></script>
     <script src="../public/jweixin-1.2.0.js"></script>
     <script>
@@ -75,11 +75,11 @@ $_SESSION['user'] = check_user($_SESSION['user']);
                 },
                 fail: function (res) {
                     //调用服务端上传远程数据到微信服务器并修改voice_id后重新调用playVoice
-                    alert("重新上传");
+//                    alert("重新上传");
                     var d = {'serverId': id, 'question_id': $(e).data("q_id")};
 
-                    alert("question_id:" + $(e).data("q_id"));
-                    alert("serverId:" + id);
+//                    alert("question_id:" + $(e).data("q_id"));
+//                    alert("serverId:" + id);
 
                     var em = em;
                     $.ajax({
@@ -200,7 +200,7 @@ $_SESSION['user'] = check_user($_SESSION['user']);
                 <?= $answer_count ?>
             </div>
             <p class="weui_grid_label">
-                回答次数
+                回答
             </p>
         </a>
         <a href="javascript:;" class="grid">
@@ -208,7 +208,7 @@ $_SESSION['user'] = check_user($_SESSION['user']);
                 <?= $play_count ?>
             </div>
             <p class="weui_grid_label">
-                被偷听次数
+                被偷听
             </p>
         </a>
         <a href="javascript:;" class="grid">
@@ -216,7 +216,7 @@ $_SESSION['user'] = check_user($_SESSION['user']);
                 <?= $up_num_count ?>
             </div>
             <p class="weui_grid_label">
-                被点赞次数
+                被点赞
             </p>
         </a>
     </div>
@@ -247,7 +247,13 @@ $_SESSION['user'] = check_user($_SESSION['user']);
             <div class="weui_cell_ft"></div>
         </a>
     <?php } ?>
-
+    <a class="weui_cell" href="./get_money.php">
+        <div class="weui_cell_hd"></div>
+        <div class="weui_cell_bd weui_cell_primary">
+            <p>我要提现</p>
+        </div>
+        <div class="weui_cell_ft"></div>
+    </a>
 </div>
 </div>
 
