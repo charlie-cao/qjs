@@ -77,6 +77,9 @@ $_SESSION['user'] = check_user($_SESSION['user']);
                 + '<div class="weui_media_bd" >'
                 + '<h4 class="weui_media_title">' + data[i].username +  title+'</h4>'
 
+                + '<p class="weui_media_desc">'
+                + data[i].memo
+                + '</p>'
                 + '    <div class="weui-rater">'
                 + '      <a class="weui-rater-box ' + star_check(data[i].star_num, 1) + '"> <span class="weui-rater-inner">★</span> </a>'
                 + '      <a class="weui-rater-box ' + star_check(data[i].star_num, 2) + '"> <span class="weui-rater-inner">★</span> </a>'
@@ -84,12 +87,9 @@ $_SESSION['user'] = check_user($_SESSION['user']);
                 + '      <a class="weui-rater-box ' + star_check(data[i].star_num, 4) + '"> <span class="weui-rater-inner">★</span> </a>'
                 + '      <a class="weui-rater-box ' + star_check(data[i].star_num, 5) + '"> <span class="weui-rater-inner">★</span> </a>'
                 + '</div>'
-                + '<p class="weui_media_desc">'
-                + data[i].memo
-                + '</p>'
                 + '</div>'
                 + '<div class="weui_media_fd">'
-                + '<a href="pt_send_question.php?id=' + data[i].id + '" class="weui_btn weui_btn_mini weui_btn_primary" style="font-size: 12px;">提问</a>'
+                + '<a href="pt_send_question.php?id=' + data[i].id + '" class="weui_btn weui_btn_mini weui_btn_warn" style="font-size: 12px;">提问</a>'
                 + '</div>'
                 + '</div>';
             return result;
@@ -177,6 +177,7 @@ $_SESSION['user'] = check_user($_SESSION['user']);
         .weui_media_title {
             float: left;
             margin-right: 10px;
+            padding-bottom: 4px;
         }
 
         .weui-rater-box {
@@ -224,19 +225,15 @@ $_SESSION['user'] = check_user($_SESSION['user']);
     <h1 class="weui-header-title">教育家</h1>
     <div class="weui-header-right"></div>
 </div>
-<div class="page-hd" style="padding: 4px;height: 34px; background: white;">
-    <div class="weui-flex">
-        <div class="weui-flex-item">
-        </div>
-        <div class="weui-flex-item">
-            <div class="weui_tab_nav">
-                <a href="zj_expert_list.php?tag=0"
-                   class="weui_navbar_item weui_nav_green <?= ($_GET['tag'] == 0) ? "bg_green" : "" ?>"> 校内 </a>
-                <a href="zj_expert_list.php?tag=1"
-                   class="weui_navbar_item weui_nav_green <?= ($_GET['tag'] == 1) ? "bg_green" : "" ?>"> 校外 </a>
-            </div>
-        </div>
-        <div class="weui-flex-item">
+<div class="page-hd" style="padding: 0px">
+    <div class="weui_tab" style="height:44px;">
+        <div class="weui_navbar" style="">
+            <a href="zj_expert_list.php?tag=0"
+               class="weui_navbar_item <?= ($_GET['tag'] == 0) ? "tab-green" : "" ?>">
+                校内 </a>
+            <a href="zj_expert_list.php?tag=1"
+               class="weui_navbar_item <?= ($_GET['tag'] == 1) ? "tab-green" : "" ?>">
+                校外 </a>
         </div>
     </div>
 </div>

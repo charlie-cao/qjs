@@ -6,9 +6,9 @@ require_once "../lib/jssdk.php";
 $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
 
 
-if($_GET['state']){
-    $_SESSION['state']=$_GET['state'];
-}else{
+if ($_GET['state']) {
+    $_SESSION['state'] = $_GET['state'];
+} else {
     echo "ID 错误";
     exit;
 }
@@ -42,7 +42,7 @@ $user = $res->fetch();
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
     <link rel="stylesheet" href="../public/style/weui.css"/>
     <link rel="stylesheet" href="../public/style/weui2.css"/>
-    <link rel="stylesheet" href="../public/style/weui3.css?1"/>
+    <link rel="stylesheet" href="../public/style/weui3.css?4"/>
     <script src="../public/zepto.min.js"></script>
     <script src="../public/jweixin-1.2.0.js"></script>
     <script>
@@ -61,7 +61,6 @@ $user = $res->fetch();
                 'onVoicePlayEnd',
                 'uploadVoice',
                 'downloadVoice',
-                'translateVoice',
                 'onVoiceRecordEnd'
             ]
         });
@@ -70,19 +69,20 @@ $user = $res->fetch();
 
             wx.onVoicePlayEnd({
                 success: function (res) {
-                    stopWave();
+                    $.hideLoading();
+                    playing = false;
                 }
             });
 
-            if(!localStorage.rainAllowRecord || localStorage.rainAllowRecord !== 'true'){
+            if (!localStorage.rainAllowRecord || localStorage.rainAllowRecord !== 'true') {
 //                alert("预先录音");
                 wx.startRecord({
-                    success: function(){
+                    success: function () {
                         localStorage.rainAllowRecord = 'true';
                         wx.stopRecord();
                     },
                     cancel: function () {
-                        alert('用户拒绝授权录音');
+                        $.alert('用户拒绝授权录音');
                     }
                 });
             }
@@ -110,8 +110,8 @@ $user = $res->fetch();
 
             $("#sendVoice").on("touchend", function (event) {
                 event.preventDefault();
-                if(voice.localId==""){
-                    alert("请先录音");
+                if (voice.localId == "") {
+                    $.alert("请先录音");
                     return true;
                 }
                 wx.uploadVoice({
@@ -125,19 +125,19 @@ $user = $res->fetch();
                         voice.school_id = "";
                         voice.question_id = <?=$question['id']?>;
 
-//                            //把录音在微信服务器上的id（res.serverId）发送到自己的服务器供下载。
+                        //把录音在微信服务器上的id（res.serverId）发送到自己的服务器供下载。
                         $.ajax({
                             url: '../api/qa.php?a=save_voice',
                             type: 'post',
                             data: voice,
                             dataType: "json",
                             success: function (data) {
-                                $.alert('您的回答已经发送',function () {
+                                $.alert('您的回答已经发送', function () {
                                     location.href = "g_my_answer.php";
                                 });
                             },
                             error: function (xhr, errorType, error) {
-                                alert(error);
+                                $.alert("录音时间过短");
                             }
                         });
                     }
@@ -147,26 +147,33 @@ $user = $res->fetch();
 
             $('#startRecord').on("touchstart", function (event) {
                 event.preventDefault();
+                $(this).addClass('r_btn_right_hover');
+                $(this).find('img').attr('src', "../public/images/icon/mic_1.png");
+
                 START = new Date().getTime();
                 recordTimer = setTimeout(function () {
-                    $("#voice_state").html("正在 录音");
-                    $("#playVoice").show();
 
-                    $("#voice_state2").html("松开 结束");
+                    $("#voice_state").html("正在录音");
+                    $("#voice_state2").html("松开结束");
+
                     wx.startRecord({
-                        success: function(){
+                        success: function () {
                             localStorage.rainAllowRecord = 'true';
                         },
                         cancel: function () {
-                            alert('用户拒绝授权录音');
+                            $.alert('用户拒绝授权录音');
                         }
                     });
-                },300);
+                }, 300);
+                return true;
             });
 
             // 4.3 停止录音
             $('#startRecord').on("touchend", function (event) {
                 event.preventDefault();
+                $(this).removeClass('r_btn_right_hover');
+                $(this).find('img').attr('src', "../public/images/icon/mic_2.png");
+
                 END = new Date().getTime();
                 if ((END - START) < 300) {
                     END = 0;
@@ -174,14 +181,15 @@ $user = $res->fetch();
                     //小于300ms，不录音
                     clearTimeout(recordTimer);
                 } else {
-                    $("#voice_state").html("试听 一下");
-                    $("#voice_state2").html("按住 说话");
+                    $("#voice_state").html("试听一下");
+                    $("#voice_state2").html("按住说话");
                     wx.stopRecord({
                         success: function (res) {
                             voice.localId = res.localId;
                         },
                         fail: function (res) {
-                            alert(JSON.stringify(res));
+//                            $.alert(JSON.stringify(res));
+                            $.alert("录音时间过短");
                         }
                     });
                 }
@@ -189,17 +197,23 @@ $user = $res->fetch();
 
             $('#playVoice').on("touchstart", function (event) {
                 event.preventDefault();
+                $(this).addClass('r_btn_left_hover');
+                $(this).find('img').attr('src', "../public/images/icon/try_1.png");
             });
 
             $('#playVoice').on("touchend", function (event) {
                 event.preventDefault();
+                $(this).find('img').attr('src', "../public/images/icon/try_2.png");
+                $(this).removeClass('r_btn_left_hover');
+
                 if (voice.localId == '') {
-                    alert('请先使用 startRecord 接口录制一段声音');
+                    $.alert('请先录制一段声音');
                     return;
                 }
                 wx.playVoice({
                     localId: voice.localId
                 });
+                $.showLoading("播放中");
             });
 
 
@@ -207,16 +221,16 @@ $user = $res->fetch();
             wx.onVoiceRecordEnd({
                 complete: function (res) {
                     voice.localId = res.localId;
-                    alert('录音时间已超过一分钟');
+                    $.alert('录音时间已超过一分钟');
                 }
             });
 
-            // 4.8 监听录音播放停止
-            wx.onVoicePlayEnd({
-                complete: function (res) {
-                    alert('录音（' + res.localId + '）播放结束');
-                }
-            });
+//            // 4.8 监听录音播放停止
+//            wx.onVoicePlayEnd({
+//                complete: function (res) {
+//                    $.alert('录音（' + res.localId + '）播放结束');
+//                }
+//            });
 
 
         })
@@ -228,7 +242,7 @@ $user = $res->fetch();
             background-color: #35C535;
             color: white;
             padding: 8px;
-            width: 100%;
+            width: 87%;
             border-radius: 20px;
             padding-left: 20px;
             line-height: 22px;
@@ -244,53 +258,62 @@ $user = $res->fetch();
 <body ontouchstart style="background-color: #f8f8f8;">
 <?php
 
-if($question['answer_content']!=""){
-?>
-<div class="weui_msg hide" id="msg1" style="display: block; opacity: 1;">
-    <div class="weui_icon_area"><i class="weui_icon_success weui_icon_msg"></i></div>
-    <div class="weui_text_area">
-        <h2 class="weui_msg_title">该问题已经回答</h2>
-        <p class="weui_msg_desc"></p>
-    </div>
-    <div class="weui_opr_area">
-        <p class="weui_btn_area">
-        </p>
-    </div>
-    <div class="weui_extra_area">
+if ($question['answer_content'] == "2") {
 
+    ?>
+    <div class="weui_msg hide" id="msg1" style="display: block; opacity: 1;">
+        <div class="weui_icon_area"><i class="weui_icon_success weui_icon_msg"></i></div>
+        <div class="weui_text_area">
+            <h2 class="weui_msg_title">该问题已经回答</h2>
+            <p class="weui_msg_desc"></p>
+        </div>
+        <div class="weui_opr_area">
+            <p class="weui_btn_area">
+            </p>
+        </div>
+        <div class="weui_extra_area">
+
+        </div>
     </div>
-</div>
-<?php
+    <?php
     exit;
 
 }
 ?>
 
-<div style="text-align: center; padding: 10px;">
-    <img class="" src="<?= $user['headimgurl'] ?>" style="width: 80px;
-                 padding: 20px;
+<div style="text-align: center; color: #333333">
+    <img src="<?= $user['headimgurl'] ?>" style="width: 80px;
+                 padding: 10px;
                  border-radius: 80px;">
-
-    <div class="weui-loadmore weui-loadmore-line">
-        <span class="weui-loadmore-tips"><?= $user['username'] ?></span>
-    </div>
-    <p class="weui_media_desc" style="padding: 20px; ">
-        请问：<?= $question['question_content'] ?>
+    <div style="font-size: 16px;"><?= $user['username'] ?></div>
+    <hr style="width: 40px;   border: 1px solid #18A5A1;  margin: 10px auto 10px auto">
+    <span style="color: #999999">问题</span>
+    <p>
+        <?= $question['question_content'] ?>
     </p>
 </div>
 
-<div style="text-align:center; height:50px;">
-    <a id="playVoice" class="paragraphExtender" style="color: white; display:none">
-        <span class="icon icon-53" style="padding-right:4px;"></span> <span id="voice_state" style=""></span>
-    </a>
+
+<div class="weui-flex  r_click_area">
+    <div class="weui-flex-item">
+        <a id="playVoice" class="r_btn r_btn_left">
+            <img src="../public/images/icon/try_2.png" onclick="return false"/>
+            <br>
+            <span id="voice_state">试听一下</span>
+        </a>
+
+    </div>
+    <div class="weui-flex-item">
+        <a id="startRecord" class="r_btn r_btn_right">
+            <img src="../public/images/icon/mic_2.png" onclick="return false"/>
+            <br>
+            <span id="voice_state2">按住说话</span>
+        </a>
+    </div>
 </div>
 
-<div style="text-align:center; height:50px;">
-    <a id="startRecord" class="paragraphExtender" style="color: white;">
-        <span class="icon icon-44" style="padding-right:4px;"></span> <span id="voice_state2" style="">按住 说话</span>
-    </a>
-</div>
-<div style="text-align:center; height:50px;">
+
+<div style="text-align:center; margin-top: 10px; margin-left: 30px; margin-right: 30px; ">
     <a id="sendVoice" class="paragraphExtender" style="color: white; background-color:#FF6600">
         <span class="icon icon-71" style="padding-right:4px;"></span> <span style="">发送 回答</span>
     </a>
@@ -298,11 +321,12 @@ if($question['answer_content']!=""){
 
 <div class="weui_cells ">
     <form id="sendMsg">
-        <input type="hidden" name="id" value="<?= $question['id'] ?>">
+        <input type="hidden" name="id" value="<?= $_REQUEST['id'] ?>">
         <input type="hidden" name="question_user_id" value="<?= $question['question_user_id'] ?>">
         <input type="hidden" name="answer_user_id" value="<?= $_SESSION['user']->id ?>">
     </form>
 </div>
+
 
 </body>
 </html>

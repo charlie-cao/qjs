@@ -7,7 +7,7 @@ check_login();
 $jssdk = new JSSDK($appid, $secret);
 $signPackage = $jssdk->GetSignPackage();
 
-$sql = "select * from sc_user_cls as c left join sc_user as u on c.user_id=u.id where cls_id=" . $_SESSION['cls']->id;
+$sql = "select * from sc_user_cls as c left join sc_user as u on c.user_id=u.id where cls_id=" . $_SESSION['cls']->id." order by c_time desc ";
 $res = $db->query($sql);
 $cls_users = $res->fetchAll();
 //var_dump($cls_users);

@@ -608,7 +608,7 @@ $db->exec($sql);
             <img src="../public/images/icon/setup.png" >
         </a>
     </div>
-    <h1 class="weui-header-title">慢成长 <?= $_SESSION['cls']->name ?></h1>
+    <h1 class="weui-header-title">宝宝慢成长 <?= $_SESSION['cls']->name ?></h1>
     <div class="weui-header-right">
         <a href="teacher_send_msg.php" class="title_icon">
             <img src="../public/images/icon/msg.png" >

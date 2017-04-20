@@ -63,9 +63,8 @@ $_SESSION['user'] = check_user($_SESSION['user']);
         wx.ready(function () {
             wx.onVoicePlayEnd({
                 success: function (res) {
-//                    alert(res.localId);
+                    $.hideLoading();
                     playing = false;
-//                    stopWave();
                 }
             });
         });
@@ -127,11 +126,13 @@ $_SESSION['user'] = check_user($_SESSION['user']);
                         url: '../api/qa.php?a=update_voice',
                         dataType: 'json',
                         success: function (data) {
-//                            alert("新ID" + data.data.mediaId);
-//                            alert($(e));
-                            $(e).data("voice_id", data.data.mediaId);
-//                            alert($(e).data("voice_id"));
-                            WXplayVoice(e);
+                            if(data.data.mediaId===null){
+                                $.hideLoading();
+                                $.alert("这个回答出差去了月球，听听别的～");
+                            }else{
+                                $(e).data("voice_id", data.data.mediaId);
+                                WXplayVoice(e);
+                            }
                         },
                         error: function (xhr, type, e) {
                             alert(type);
@@ -142,36 +143,10 @@ $_SESSION['user'] = check_user($_SESSION['user']);
         }
 
         function playVoice(e) {
+            $.showLoading("回答播放中");
             WXplayVoice(e);
         }
     </script>
-    <style>
-        .paragraphExtender {
-            background-color: #35C535;
-            color: white;
-            padding: 4px;
-            /* width: 70%; */
-            /* float: left; */
-            border-radius: 20px;
-            float: none;
-
-            /* padding-left: 20px; */
-            /* line-height: 22px; */
-        }
-
-        .weui_cells:before {
-            top: 0;
-            border-top: 0px solid #d9d9d9;
-            -webkit-transform-origin: 0 0;
-            transform-origin: 0 0;
-        }
-
-        .weui_grid_icon2 {
-            text-align: center;
-        }
-    </style>
-
-
 </head>
 
 <body ontouchstart="" style="background-color: #f8f8f8;">
@@ -207,9 +182,9 @@ $_SESSION['user'] = check_user($_SESSION['user']);
                 <div class="weui_cell_ft">
                     <?php if ($q['answer_content'] == "") { ?>
 
-                        <a id="paragraphExtender" class="paragraphExtender " style="color: #cccccc;background-color: #FF6600;" >
-                            <span class="icon icon-52" style="padding-right:4px"></span>
-                            尚未回答
+                        <a class="weui_btn weui_btn_mini weui_btn_warn ">
+                            <img src="../public/images/icon/time.png" class="btn_icon btn_icon_sm" >
+                            待回答
                         </a>
                     <?php } else { ?>
                         <a id="paragraphExtender" class="paragraphExtender" style="color: white;"
@@ -217,16 +192,14 @@ $_SESSION['user'] = check_user($_SESSION['user']);
                            data-voice_id="<?= $q['answer_content'] ?>"
                            data-answer_user_id="<?= $q['answer_user_id'] ?>"
                            data-q_id="<?= $q['id'] ?>">
-                            <span class="icon icon-53" style="padding-right:4px"></span>
-                            收听解答
+                            <img src="../public/images/icon/play.png" class="btn_icon btn_icon_sm" >
+                            听解答
                         </a>
                     <?php } ?>
                 </div>
             </div>
         <?php } ?>
         <?php if (count($questions) == 0) {
-
-
             ?>
             <div class="weui_cell">
                 还没有问题

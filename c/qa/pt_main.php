@@ -26,18 +26,6 @@ if (!isset($_GET['tag'])) {
     <script src="../public/lazyimg.js"></script>
     <script src="../public/jweixin-1.2.0.js"></script>
     <style>
-        .paragraphExtender {
-            background-color: #35C535;
-            color: white;
-            padding: 4px;
-            width: 70%;
-            float: left;
-            border-radius: 20px;
-            padding-left: 20px;
-            line-height: 22px;
-
-        }
-
         .paragraph {
             word-break: break-all;
         }
@@ -67,7 +55,7 @@ if (!isset($_GET['tag'])) {
         wx.ready(function () {
             wx.onVoicePlayEnd({
                 success: function (res) {
-//                    alert(res.localId);
+                    $.hideLoading();
                     playing = false;
 //                    stopWave();
                 }
@@ -130,11 +118,13 @@ if (!isset($_GET['tag'])) {
                         url: '../api/qa.php?a=update_voice',
                         dataType: 'json',
                         success: function (data) {
-//                            alert("新ID" + data.data.mediaId);
-//                            alert($(e));
-                            $(e).data("voice_id", data.data.mediaId);
-//                            alert($(e).data("voice_id"));
-                            WXplayVoice(e);
+                            if(data.data.mediaId===null){
+                                $.hideLoading();
+                                $.alert("这个回答出差去了月球，听听别的～");
+                            }else{
+                                $(e).data("voice_id", data.data.mediaId);
+                                WXplayVoice(e);
+                            }
                         },
                         error: function (xhr, type, e) {
                             alert(type);
@@ -145,6 +135,7 @@ if (!isset($_GET['tag'])) {
         }
 
         function playVoice(e) {
+            $.showLoading("回答播放中");
             WXplayVoice(e);
         }
 
@@ -239,19 +230,20 @@ if (!isset($_GET['tag'])) {
 
             if(<?=$_GET['tag']?>==2){
                 //判定是否为校内专家
-                var q_btn_html = '<a href="pt_send_question.php?id=' + data[i].answer_user[0].id + '" class="weui_btn weui_btn_mini weui_btn_primary"  style ="font-size: 12px;">提问</ a>';
+                var q_btn_html = '<a href="pt_send_question.php?id=' + data[i].answer_user[0].id + '" class="paragraphExtender ask"  ><img src="../public/images/icon/ask.png" class="btn_icon" > 我要提问</a>';
             }else if (data[i].answer_user[0].is_expert == 1) {
-                var q_btn_html = '<a href="pt_send_question.php?id=' + data[i].answer_user[0].id + '" class="weui_btn weui_btn_mini weui_btn_primary"  style ="font-size: 12px;">提问</ a>';
+                var q_btn_html = '<a href="pt_send_question.php?id=' + data[i].answer_user[0].id + '" class="paragraphExtender ask"  ><img src="../public/images/icon/ask.png" class="btn_icon" > 我要提问</a>';
             } else {
                 var q_btn_html = "";
             }
+
+
             var result = ''
                 + '<!-- 普通的post -->'
                 + '<div class="weui_cell moments__post">'
 
                 + '<div class="weui_cell_hd weui-updown">'
                 + '<img src="' + data[i].answer_user[0].headimgurl + '"/>'
-                + q_btn_html
                 + '</div>'
 
                 + '<div class="weui_cell_bd"  style="width: 100%;">'
@@ -270,7 +262,8 @@ if (!isset($_GET['tag'])) {
                 + "回答 : " + data[i].question_content
                 + '</p>'
                 + '<!-- 伸张链接 -->'
-                + '<a id="paragraphExtender" class="paragraphExtender" style="color: white;" onclick="playVoice(this)" data-voice_id="' + data[i].answer_content + '" data-answer_user_id="' + data[i].answer_user_id + '" data-q_id="' + data[i].id + '"><span class="icon icon-53" style="padding-right:4px"></span> 免费 旁听 </a>'
+                + '<a  class="paragraphExtender" style="color: white;" onclick="playVoice(this)" data-voice_id="' + data[i].answer_content + '" data-answer_user_id="' + data[i].answer_user_id + '" data-q_id="' + data[i].id + '"><img src="../public/images/icon/play.png" class="btn_icon" > 免费旁听 </a>'
+                + q_btn_html
                 + '<!-- 相册 -->'
                 + '<div class="thumbnails">'
 
@@ -425,34 +418,31 @@ if (!isset($_GET['tag'])) {
 
 <div class="weui-header bg-green">
     <div class="weui-header-left">
-        <a href="pt_my_question.php" class="icon icon-85 f-white" style="font-size: 26px;"></a>
+        <a href="pt_my_question.php" class="title_icon" >
+            <img src="../public/images/icon/my.png" >
+        </a>
     </div>
     <h1 class="weui-header-title">千家师</h1>
     <div class="weui-header-right">
-        <a href="pt_expert_list.php" class="icon icon-99 f-white" style="font-size: 26px;"></a>
+        <a href="pt_expert_list.php" class="title_icon" >
+            <img src="../public/images/icon/zhuanjia.png" >
+        </a>
     </div>
 </div>
 
-<div class="page-hd" style="padding: 4px;height: 34px; background: white;">
-    <div class="weui-flex">
-        <div class="weui-flex-item">
-
-        </div>
-        <div class="weui-flex-item">
-            <div class="weui_tab_nav">
-                <a href="pt_main.php?tag=2"
-                   class="weui_navbar_item weui_nav_green <?= ($_GET['tag'] == 2) ? "bg_green" : "" ?>"> 校内 </a>
-                <a href="pt_main.php?tag=0"
-                   class="weui_navbar_item weui_nav_green <?= ($_GET['tag'] == 0) ? "bg_green" : "" ?>"> 校外 </a>
-            </div>
-        </div>
-
-        <div class="weui-flex-item">
-
+<div class="page-hd" style="padding: 0px">
+    <div class="weui_tab" style="height:44px;">
+        <div class="weui_navbar" style="">
+            <a href="pt_main.php?tag=2"
+               class="weui_navbar_item <?= ($_GET['tag'] == 2) ? "tab-green" : "" ?>">
+                校内 </a>
+            <a href="pt_main.php?tag=0"
+               class="weui_navbar_item <?= ($_GET['tag'] == 0) ? "tab-green" : "" ?>">
+                校外 </a>
         </div>
     </div>
-
 </div>
+
 <div class="weui_panel weui_panel_access" style="     margin-top: 0px; ">
     <div class="weui_panel_bd weui_cells moments">
     </div>

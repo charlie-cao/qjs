@@ -57,7 +57,8 @@ $_SESSION['user'] = check_user($_SESSION['user']);
         wx.ready(function () {
             wx.onVoicePlayEnd({
                 success: function (res) {
-                    stopWave();
+                    $.hideLoading();
+                    playing = false;
                 }
             });
         });
@@ -88,15 +89,13 @@ $_SESSION['user'] = check_user($_SESSION['user']);
                         url: '../api/qa.php?a=update_voice',
                         dataType: 'json',
                         success: function (data) {
-                            alert("新ID" + data.data.mediaId);
-                            alert($(e));
-
-                            $(e).data("voice_id") = data.mediaId;
-
-                            alert(data.data.mediaId);
-                            alert($(e).data("voice_id"));
-
-                            WXplayVoice(data.data.mediaId, e);
+                            if(data.data.mediaId===null){
+                                $.hideLoading();
+                                $.alert("这个回答出差去了月球，听听别的～");
+                            }else{
+                                $(e).data("voice_id", data.data.mediaId);
+                                WXplayVoice(e);
+                            }
                         },
                         error: function (xhr, type, e) {
                             alert(type);
@@ -107,6 +106,7 @@ $_SESSION['user'] = check_user($_SESSION['user']);
         }
 
         function playVoice(e) {
+            $.showLoading("回答播放中");
             var id = $(e).data("voice_id");
             WXplayVoice(id, e);
         }
@@ -149,10 +149,11 @@ $_SESSION['user'] = check_user($_SESSION['user']);
 
 <?php if ($_SESSION['user']->is_expert) {
 
-    $sql = "SELECT count(*) as c FROM `sc_question` WHERE `answer_user_id` = " . $_SESSION['user']->id;
+
+    $sql = "SELECT sum(money) as c FROM `sc_pay_log` WHERE `get_user_id` = " . $_SESSION['user']->id;
     $res = $db->query($sql);
     $re = $res->fetch();
-    $money_count = $re['c'];
+    $money_count = $re['c']/100;
 
     $sql = "SELECT count(*) as c FROM `sc_question` WHERE answer_content is not null and `answer_user_id` = " . $_SESSION['user']->id;
     $res = $db->query($sql);
@@ -188,10 +189,10 @@ $_SESSION['user'] = check_user($_SESSION['user']);
     <div class="weui_grids grids-small" style="background-color: #fff;">
         <a href="javascript:;" class="grid">
             <div class="weui_grid_icon2">
-                <?= $money_count * 10 ?>
+                <?= $money_count  ?>
             </div>
             <p class="weui_grid_label">
-                总收入
+                收入
             </p>
         </a>
         <a href="javascript:;" class="grid">

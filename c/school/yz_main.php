@@ -469,7 +469,7 @@ if (!isset($_GET['tag'])) {
             <img src="../public/images/icon/setup.png" >
         </a>
     </div>
-    <h1 class="weui-header-title">大家庭</h1>
+    <h1 class="weui-header-title">校园大家庭</h1>
     <div class="weui-header-right">
         <a href="yz_send_msg.php" class="title_icon">
             <img src="../public/images/icon/msg.png" >

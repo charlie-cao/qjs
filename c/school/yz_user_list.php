@@ -7,12 +7,13 @@ check_login();
 $jssdk = new JSSDK($appid, $secret);
 $signPackage = $jssdk->GetSignPackage();
 
-$sql = "select * from sc_user_school as s left join sc_user as u on s.user_id=u.id where s.is_leader!=true and s.school_id=" . $_SESSION['school_id'];
+$sql = "select * from sc_user_school as s left join sc_user as u on s.user_id=u.id where s.is_leader!=true and s.school_id=" . $_SESSION['school_id']." order by u.add_time desc";
 $res = $db->query($sql);
 $res->setFetchMode(PDO::FETCH_OBJ);
 $user = $res->fetchAll();
 
-
+//var_dump($user);
+//exit;
 
 ?>
 <!doctype html>
@@ -27,8 +28,6 @@ $user = $res->fetchAll();
     <script src="../public/zepto.min.js"></script>
     <script src="../public/jweixin-1.2.0.js"></script>
     <script>
-
-
         wx.config({
             debug: false,
             appId: '<?= $signPackage["appId"]; ?>',
@@ -188,7 +187,6 @@ $user = $res->fetchAll();
                 });
             })
         });
-
     </script>
 </head>
 
@@ -205,7 +203,7 @@ $user = $res->fetchAll();
     <?php
     if (count($user) > 0) {
         foreach ($user as $u) {
-            if ($u->is_assistant) {
+            if ($u->is_assistant && $u->id!="") {
                 ?>
                 <div class="weui_cell">
                     <div class="weui_cell_hd"><img
@@ -232,7 +230,7 @@ $user = $res->fetchAll();
     if (count($user) > 0) {
         foreach ($user as $u) {
 //            var_dump($u);
-            if ($u->is_teacher) {
+            if ($u->is_teacher && $u->id!="") {
                 ?>
                 <div class="weui_cell">
                     <div class="weui_cell_hd"><img
@@ -257,20 +255,22 @@ $user = $res->fetchAll();
     <?php
     if (count($user) > 0) {
         foreach ($user as $u) {
-            ?>
-            <div class="weui_cell">
-                <div class="weui_cell_hd"><img
-                            src="<?= $u->headimgurl ?>"
-                            alt="" style="width:20px;margin-right:5px;display:block"></div>
-                <div class="weui_cell_bd weui_cell_primary">
-                    <p><?= $u->username ?></p>
+            if($u->id!="") {
+                ?>
+                <div class="weui_cell">
+                    <div class="weui_cell_hd"><img
+                                src="<?= $u->headimgurl ?>"
+                                alt="" style="width:20px;margin-right:5px;display:block"></div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p><?= $u->username ?></p>
+                    </div>
+                    <div class="weui_cell_ft">
+                        <a href="javascript:;" class="weui_btn weui_btn_mini weui_btn_primary"
+                           data-id="<?= $u->id ?>">任命</a>
+                    </div>
                 </div>
-                <div class="weui_cell_ft">
-                    <a href="javascript:;" class="weui_btn weui_btn_mini weui_btn_primary"
-                       data-id="<?= $u->id ?>">任命</a>
-                </div>
-            </div>
-            <?php
+                <?php
+            }
         }//end foreach
     }//end if
     ?>

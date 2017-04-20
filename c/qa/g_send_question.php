@@ -25,10 +25,10 @@ $res = $db->query($sql);
 $user = $res->fetch();
 
 
-$sql = "SELECT count(*) as c FROM `sc_question` WHERE `answer_user_id` = " . $_REQUEST['id'];
+$sql = "SELECT sum(money) as c FROM `sc_pay_log` WHERE `get_user_id` = " . $_REQUEST['id'];
 $res = $db->query($sql);
 $re = $res->fetch();
-$money_count = $re['c'];
+$money_count = $re['c']/100;
 
 $sql = "SELECT count(*) as c FROM `sc_question` WHERE answer_content is not null and `answer_user_id` = " . $_REQUEST['id'];
 $res = $db->query($sql);
@@ -72,7 +72,7 @@ $input = new WxPayUnifiedOrder();
 $input->SetBody("提问费用");
 $input->SetAttach("attach");
 $input->SetOut_trade_no(WxPayConfig::MCHID . date("YmdHis"));
-$input->SetTotal_fee("1");
+$input->SetTotal_fee($price_money);
 $input->SetTime_start(date("YmdHis"));
 $input->SetTime_expire(date("YmdHis", time() + 600));
 $input->SetGoods_tag("goods_tag");
@@ -195,14 +195,27 @@ $jsApiParameters = $tools->GetJsApiParameters($order);
             }
         }
     </script>
+
+    <style>
+        .weui_grids:before{
+            border: none!important;
+        }
+        .grid:after {
+            border-bottom: none!important;
+        }
+        .grids-small .grid{
+            padding: 0px!important;
+            margin-bottom: 10px!important;
+        }
+    </style>
 </head>
 
 <body ontouchstart style="background-color: #f8f8f8;">
 
 
 <div style="text-align: center; padding: 10px;">
-    <img class="" src="<?= $user['headimgurl'] ?>" style="width: 80px; padding: 10px; border-radius: 80px;">
-    <div><span style="font-size: 14px;"><?= $user['username'] ?></span><span class="weui-label-s"
+    <img class="" src="<?= $user['headimgurl'] ?>" style="width: 60px; padding: 6px; border-radius: 80px;">
+    <div><span style="font-size: 14px;"><?= $user['username'] ?></span><br><span class="weui-label-s"
                                                                              style="font-size: 8px; margin-left: 8px;"><?= $user['small_memo'] ? $user['small_memo'] : "特约专家" ?></span>
     </div>
     <p class="weui_media_desc" style="padding-top: 4px;font-size:12px;overflow: hidden;
@@ -210,25 +223,56 @@ $jsApiParameters = $tools->GetJsApiParameters($order);
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 4;"><?= $user['memo'] ? $user['memo'] : "还没有填写备注" ?></p>
 </div>
-<div style="color: #aaa;
-    text-align: center;
-    font-size: 10px;">收入<?= $money_count ?>元 <?= $answer_count ?>个回答 <?= $play_count ?>人偷听 <?= $up_num_count ?>人觉得赞
-</div>
 
+<div class="weui_grids grids-small" >
+    <a href="javascript:;" class="grid">
+        <div class="weui_grid_icon2">
+            ¥ <?= $money_count  ?>
+        </div>
+        <p class="weui_grid_label">
+            收入
+        </p>
+    </a>
+    <a href="javascript:;" class="grid">
+        <div class="weui_grid_icon2">
+            <?= $answer_count ?>
+        </div>
+        <p class="weui_grid_label">
+            回答
+        </p>
+    </a>
+    <a href="javascript:;" class="grid">
+        <div class="weui_grid_icon2">
+            <?= $play_count ?>
+        </div>
+        <p class="weui_grid_label">
+            听取
+        </p>
+    </a>
+    <a href="javascript:;" class="grid">
+        <div class="weui_grid_icon2">
+            <?= $up_num_count ?>
+        </div>
+        <p class="weui_grid_label">
+            点赞
+        </p>
+    </a>
+</div>
 <div class="weui_cells " style="margin-top: 2px !important; ">
     <form id="sendMsg">
         <input type="hidden" name="question_user_id" value="<?= $_SESSION['user']->id ?>">
         <input type="hidden" name="answer_user_id" value="<?= $user['id'] ?>">
         <div class="weui_cell">
             <div class="weui_cell_bd weui_cell_primary">
-                <textarea id="content" name="content" class="weui_textarea" placeholder="提问内容" rows="3"></textarea>
+                <textarea id="content" name="content" class="weui_textarea" placeholder="提问，是一种认可..." rows="3"></textarea>
                 <div class="weui_textarea_counter"><span id='count'>0</span>/<span id='count_max'>200</span></div>
             </div>
         </div>
     </form>
 </div>
 <div class="weui_btn_area">
-    <a class="weui_btn weui_btn_primary" href="javascript:;" id="formSubmitBtn">付费提问 8.8元</a>
+    <a class="weui_btn weui_btn_primary" href="javascript:;" id="formSubmitBtn">付费提问 <?= $price_money/100?>元</a>
+
 </div>
 </body>
 </html>

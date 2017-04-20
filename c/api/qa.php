@@ -373,6 +373,7 @@ function send_question()
 {
     global $db;
     global $json;
+    global $price_money;
 
      $school_id = isset($_REQUEST['school_id']) ? $_REQUEST['school_id'] : "NULL";
 
@@ -400,7 +401,7 @@ function send_question()
         //用户问题提出的账单记录
         $q_id = $db->lastInsertId();
         //一个问题的价格
-        $money = 10;
+        $money = $price_money;
         pay_log($school_id, $_REQUEST['question_user_id'], $_REQUEST['answer_user_id'], $money, $q_id);
 
         //发送通知到被提问的专家

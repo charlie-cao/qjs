@@ -99,8 +99,29 @@ div {
 }
 
 .paragraphExtender {
-    /*background-color: #61CBCB!important;*/
+    background-color: #61CBCB!important;
+    border: 1px solid #35BDB8;
+    padding: 2px;
+    /*width: 70%;*/
+    float: left;
+    border-radius: 20px;
+    padding-left: 10px;
+    padding-right: 10px;
+    line-height: 22px;
+    color: white!important;
+    word-break: keep-all!important;
+}
 
+
+.paragraph {
+    word-break: break-all;
+}
+
+.ask {
+    border:1px solid #F05B55!important;
+    color: white!important;
+    margin-left: 10px!important;
+    background-color: #FF6E6C!important;
 }
 
 .weui_tab_nav .weui_nav_green.bg_green {
@@ -108,3 +129,80 @@ div {
 
 }
 
+.tw{
+    font-size: 12px!important;
+    background-color: #FF6E6C!important;
+    margin-top: -5px!important;
+    border-radius: 0px!important;
+    padding: 0px;
+    line-height: 20px;
+    border-radius: 0px 0px 4px 4px!important;
+    border: solid 1px #F05B55;
+}
+
+.btn_icon{
+    height: 20px;
+    margin-right: 6px;
+}
+
+.btn_icon_sm{
+    height: 12px;
+}
+
+
+.weui_grid_icon2 {
+    text-align: center;
+    font-size: 14px;
+}
+.weui_grid_label{
+    font-size: 14px;
+}
+.weui_btn_primary:not(.weui_btn_disabled):active{
+    background-color: #18b4ed!important;
+}
+
+
+
+
+.r_click_area{
+    margin-top: 25px;
+}
+
+.r_btn {
+    height: 100px;
+    width: 100px;
+    display: block;
+    margin: 0 auto;
+    /*line-height: 100px;*/
+    border-radius: 100px;
+    text-align: center;
+    color: white;
+    font-size: 14px;
+}
+.r_btn_left{
+    border: 2px solid #35BDB8;
+    color: #35BDB8;
+    margin-right: 10px;
+}
+.r_btn_right{
+    border: 2px solid #F05B55;
+    color: #F05B55;
+    margin-left:10px;
+}
+.r_btn img {
+    width: 20px;
+    margin-top: 20px;
+}
+.r_btn span{
+}
+.r_btn_left_hover{
+    background-color: #00908E;
+    color: white!important;
+}
+.r_btn_right_hover{
+    background-color: #F05B55;
+    color: white!important;
+}
+
+
+img { pointer-events: none; }
