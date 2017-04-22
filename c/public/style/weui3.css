@@ -206,3 +206,16 @@ div {
 
 
 img { pointer-events: none; }
+.weui_cell_hd img{
+    pointer-events: auto!important;
+}
+.weui_media_hd img{
+    pointer-events: auto!important;
+}
+.weui_dialog_hd{
+    /*border-top: 3px solid #abc;*/
+    /*border-bottom: 0px;*/
+    /*border-left: 0px;*/
+    /*border-right: 0px;*/
+    /*border-image: -webkit-linear-gradient( #11EE6D , #00C9C1) 30 30;*/
+}

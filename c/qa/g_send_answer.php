@@ -258,7 +258,7 @@ $user = $res->fetch();
 <body ontouchstart style="background-color: #f8f8f8;">
 <?php
 
-if ($question['answer_content'] == "2") {
+if ($question['answer_content'] != "") {
 
     ?>
     <div class="weui_msg hide" id="msg1" style="display: block; opacity: 1;">

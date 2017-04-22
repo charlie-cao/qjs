@@ -13,6 +13,9 @@ if (!isset($_GET['tag'])) {
     $_GET['tag'] = "";
 }
 
+$_SESSION['now_cls_tag'] = $_GET['tag'];
+
+
 if (isset($_GET['school_id'])) {
     //设置默认的 cls_id 可以在用户信息里获得
     $_SESSION['school_id'] = $_GET['school_id'];
@@ -65,7 +68,7 @@ $db->exec($sql);
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
     <link rel="stylesheet" href="../public/style/weui.css"/>
     <link rel="stylesheet" href="../public/style/weui2.css"/>
-    <link rel="stylesheet" href="../public/style/weui3.css?1"/>
+    <link rel="stylesheet" href="../public/style/weui3.css?3"/>
     <script src="../public/zepto.min.js"></script>
     <script src="../public/jweixin-1.2.0.js"></script>
     <script src="../public/updown.js"></script>
@@ -95,39 +98,6 @@ $db->exec($sql);
 
         wx.ready(function () {
             wx.hideAllNonBaseMenuItem();
-//            // 更新本分享链接
-//            wx.showMenuItems({
-//                menuList: ["menuItem:share:appMessage","menuItem:share:timeline"]
-//                // 要隐藏的菜单项，只能隐藏“传播类”和“保护类”按钮，所有menu项见附录3
-//            });
-//
-//            wx.onMenuShareAppMessage({
-//                title: '<?//=$_SESSION['user']->username?>//邀请您加入<?//=$_SESSION['school']->name?>//', // 分享标题
-//                desc: '', // 分享描述
-//                link: '<?//= $server_host ?>///c/school/index.php?state=<?//=$_SESSION['school']->id?>//', // 分享链接
-//                imgUrl: '<?//= $server_host ?>///c/public/images/wx_inv.jpg', // 分享图标
-//                type: '', // 分享类型,music、video或link，不填默认为link
-//                dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
-//                success: function () {
-//                    // 用户确认分享后执行的回调函数
-//                },
-//                cancel: function () {
-//                    // 用户取消分享后执行的回调函数
-//                }
-//            });
-//
-//            wx.onMenuShareTimeline({
-//                title: '<?//=$_SESSION['user']->username?>//邀请您加入<?//=$_SESSION['school']->name?>//', // 分享标题
-//                link: '<?//= $server_host ?>///c/school/index.php?state=<?//=$_SESSION['school']->id?>//', // 分享链接
-//                imgUrl: '<?//= $server_host ?>///c/public/images/wx_inv.jpg', // 分享图标
-//                success: function () {
-//                    // 用户确认分享后执行的回调函数
-//                },
-//                cancel: function () {
-//                    // 用户取消分享后执行的回调函数
-//                }
-//            });
-
         });
 
 

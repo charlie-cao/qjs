@@ -7,9 +7,6 @@ check_login();
 $jssdk = new JSSDK($appid, $secret);
 $signPackage = $jssdk->GetSignPackage();
 
-$sql = "select * from sc_cls where id=".$_SESSION['cls_id'];
-$res = $db->query($sql);
-$cls = $res->fetch();
 ?>
 <!doctype html>
 <html>
@@ -77,7 +74,7 @@ $cls = $res->fetch();
     <div class="weui_tab_bd">
 
         <div class="weui-header bg-green">
-            <div class="weui-header-left">  <a href="teacher_cls_list.php" class="icon icon-109 f-white">返回</a>  </div>
+            <div class="weui-header-left">  <a href="#" onclick="history.go(-1)" class="icon icon-109 f-white">返回</a>  </div>
             <h1 class="weui-header-title">添加班级</h1>
             <div class="weui-header-right"> </div>
         </div>

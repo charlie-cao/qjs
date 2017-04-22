@@ -243,14 +243,14 @@ if (!isset($_GET['tag'])) {
                 + '<div class="weui_cell moments__post">'
 
                 + '<div class="weui_cell_hd weui-updown">'
-                + '<img src="' + data[i].answer_user[0].headimgurl + '"/>'
+                + '<a "pt_send_question.php?id=' + data[i].answer_user[0].id + '"><img src="' + data[i].answer_user[0].headimgurl + '"/></a>'
                 + '</div>'
 
                 + '<div class="weui_cell_bd"  style="width: 100%;">'
                 + '<! --  删除链接 -->'
 
                 + '<!- - 人名链接 -->'
-                + '<a class="title" href="javascript:;">'
+                + '<a class="title" href="pt_send_question.php?id=' + data[i].answer_user[0].id + '">'
                 + '<span>' + data[i].answer_user[0].username + '</span>'
                 + '<span class="weui-label-s" >' + data[i].answer_user[0].small_memo + '</span>'
 
@@ -419,13 +419,13 @@ if (!isset($_GET['tag'])) {
 <div class="weui-header bg-green">
     <div class="weui-header-left">
         <a href="pt_my_question.php" class="title_icon" >
-            <img src="../public/images/icon/my.png" >
+            <img src="../public/images/icon/qjs_my.png" >
         </a>
     </div>
     <h1 class="weui-header-title">千家师</h1>
     <div class="weui-header-right">
         <a href="pt_expert_list.php" class="title_icon" >
-            <img src="../public/images/icon/zhuanjia.png" >
+            <img src="../public/images/icon/zhuanjia2.png" >
         </a>
     </div>
 </div>

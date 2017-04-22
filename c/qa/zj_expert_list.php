@@ -71,12 +71,13 @@ $_SESSION['user'] = check_user($_SESSION['user']);
             var result = ''
                 + '<div class="weui_media_box weui_media_appmsg">'
                 + '<div class="weui_media_hd">'
-                + '<img class="weui_media_appmsg_thumb" src="' + data[i].headimgurl + '"/>'
+                + '<a href="pt_send_question.php?id=' + data[i].id + '" ><img class="weui_media_appmsg_thumb" src="' + data[i].headimgurl + '"/></a>'
                 + '</div>'
 
                 + '<div class="weui_media_bd" >'
-                + '<h4 class="weui_media_title">' + data[i].username +  title+'</h4>'
-
+                + '<a href="pt_send_question.php?id=' + data[i].id + '" >'
+                + '<h4 class="weui_media_title">' + data[i].username + title + '</h4>'
+                + '</a>'
                 + '<p class="weui_media_desc">'
                 + data[i].memo
                 + '</p>'

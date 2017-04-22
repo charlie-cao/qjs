@@ -6,6 +6,12 @@ require_once '../lib/fun.php';
 $sql = "select * from sc_cls where school_id=" . $_SESSION['school_id']." order by c_time desc";
 $res = $db->query($sql);
 $cls = $res->fetchAll();
+
+//判断该用户在学校中是否为班主任
+$sql = "select * from sc_user_school where school_id=" . $_SESSION['school_id'] . " and user_id=" . $_SESSION['user']->id;
+$q = $db->query($sql);
+$r = $q->fetch();
+
 ?>
 <!doctype html>
 <html>
@@ -30,7 +36,11 @@ $cls = $res->fetchAll();
 
             </div>
             <h1 class="weui-header-title">本校班级</h1>
-            <div class="weui-header-right"></div>
+            <div class="weui-header-right">
+                <?php if ($r['is_teacher']) { ?>
+                    <a href="teacher_add_cls.php" class="icon icon-36 f-white"> 创建班级</a>
+                <?php } ?>
+            </div>
         </div>
 
 

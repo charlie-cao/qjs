@@ -185,7 +185,7 @@ $signPackage = $jssdk->GetSignPackage();
                 <select class="weui_select" name="tag" id="tag">
                     <option value="">动态</option>
                     <?php foreach ($_SESSION['cls_tags'] as $key => $val) { ?>
-                        <option value="<?= $val['id'] ?>"><?= $val['name'] ?></option>
+                        <option value="<?= $val['id'] ?>" <?php if($_SESSION['now_cls_tag'] == $val['id']){ echo "selected" ;}?>><?= $val['name'] ?></option>
                     <?php } ?>
                 </select>
             </div>

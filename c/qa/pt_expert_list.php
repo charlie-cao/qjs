@@ -41,7 +41,7 @@ $_SESSION['user'] = check_user($_SESSION['user']);
     <script src="../public/lazyimg.js"></script>
     <script>
         function addCell(data, i) {
-            if(data[i].small_memo=="" || data[i].small_memo===null){
+            if (data[i].small_memo == "" || data[i].small_memo === null) {
                 data[i].small_memo = "特约专家";
             }
             if (data[i].memo == "" || data[i].memo === null) {
@@ -57,11 +57,11 @@ $_SESSION['user'] = check_user($_SESSION['user']);
             }
 
             var title = "";
-            if(data[i].is_leader=="1"){
+            if (data[i].is_leader == "1") {
                 title = '<label class="weui-label-s">园长</label>';
-            }else if(data[i].is_teacher=="1"){
+            } else if (data[i].is_teacher == "1") {
                 title = '<label  class="weui-label-s">教师</label>';
-            }else if(data[i].is_assistant=="1"){
+            } else if (data[i].is_assistant == "1") {
                 title = '<label class="weui-label-s">助理</label>';
             }
             title = '<span class="weui-label-s" style="font-size: 8px; margin-left: 8px;">' + data[i].small_memo + '</span>';
@@ -71,11 +71,13 @@ $_SESSION['user'] = check_user($_SESSION['user']);
             var result = ''
                 + '<div class="weui_media_box weui_media_appmsg">'
                 + '<div class="weui_media_hd">'
-                + '<img class="weui_media_appmsg_thumb" src="' + data[i].headimgurl + '"/>'
+                + '<a href="pt_send_question.php?id=' + data[i].id + '" ><img class="weui_media_appmsg_thumb" src="' + data[i].headimgurl + '"/></a>'
                 + '</div>'
 
                 + '<div class="weui_media_bd" >'
-                + '<h4 class="weui_media_title">' + data[i].username +  title+'</h4>'
+                + '<a href="pt_send_question.php?id=' + data[i].id + '" >'
+                + '<h4 class="weui_media_title">' + data[i].username + title + '</h4>'
+                + '</a>'
                 + '<p class="weui_media_desc">'
                 + data[i].memo
                 + '</p>'
@@ -213,7 +215,7 @@ $_SESSION['user'] = check_user($_SESSION['user']);
             left: 0px;
         }
 
-        .weui-label-s{
+        .weui-label-s {
             margin-left: 4px;
         }
     </style>

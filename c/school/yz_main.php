@@ -10,6 +10,7 @@ $signPackage = $jssdk->GetSignPackage();
 if (!isset($_GET['tag'])) {
     $_GET['tag'] = "";
 }
+$_SESSION['now_school_tag'] = $_GET['tag'];
 
 
 ?>
